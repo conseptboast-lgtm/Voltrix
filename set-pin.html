@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Set PIN - VOLTRIX</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background-color: #F9FAFB; color: #111827; padding: 15px 15px 80px 15px; min-height: 100vh; display: flex; justify-content: center; }
+  .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; margin-bottom: 10px; }
+  .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2563EB; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+  .back-btn:active { transform: scale(0.95); background: #EFF6FF; }
+  .header-title { font-size: 18px; font-weight: 800; color: #111827; }
+
+  .pin-hero { text-align: center; margin: 20px 0 30px; }
+  .ph-icon { font-size: 48px; margin-bottom: 12px; }
+  .ph-title { font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+  .ph-sub { font-size: 13px; font-weight: 500; color: #6B7280; line-height: 1.5; }
+
+  .card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 20px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
+  
+  .input-group { margin-bottom: 16px; }
+  .input-group label { display: block; font-size: 11px; font-weight: 800; color: #2563EB; letter-spacing: 0.8px; margin-bottom: 8px; text-transform: uppercase; }
+  .input-wrap { position: relative; display: flex; align-items: center; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; transition: 0.2s; }
+  .input-wrap:focus-within { border-color: #2563EB; background: #FFFFFF; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+  .input-wrap input { width: 100%; padding: 16px; border: none; background: transparent; font-size: 18px; font-weight: 800; color: #111827; outline: none; border-radius: 12px; letter-spacing: 8px; text-align: center; }
+  .input-wrap input::placeholder { color: #9CA3AF; font-weight: 500; letter-spacing: normal; font-size: 14px; }
+
+  .btn-primary { width: 100%; padding: 16px; background: #2563EB; color: #FFFFFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-primary:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3); }
+  
+  .msg { display: none; align-items: center; justify-content: center; text-align: center; font-size: 12.5px; margin-top: 14px; font-weight: 700; padding: 12px 14px; border-radius: 12px; width: 100%; }
+  .msg.show { display: flex; }
+  .msg.error { background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; }
+  .msg.success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #16A34A; }
+
+  .popup-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 200; }
+  .popup-card { max-width: 340px; background: #FFFFFF; border-radius: 24px; padding: 28px; width: 100%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+  .spinner { width: 40px; height: 40px; border: 4px solid #E5E7EB; border-top: 4px solid #2563EB; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .update-text { font-size: 15px; font-weight: 800; color: #2563EB; }
+  .updated-icon { width: 60px; height: 60px; background: #DCFCE7; color: #16A34A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; margin: 0 auto 16px; }
+  .updated-text { color: #16A34A; font-size: 16px; }
+
+  .footer { margin-top: 24px; text-align: center; font-size: 11px; color: #9CA3AF; font-weight: 700; padding-bottom: 20px; }
+  .footer .sep { color: #2563EB; margin: 0 6px; font-weight: 900; }
+</style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+    <div class="header-title">Set Withdrawal PIN</div>
+    <div style="width:40px"></div>
+  </div>
+
+  <div class="pin-hero">
+    <div class="ph-icon">🔐</div>
+    <div class="ph-title">Create Your PIN</div>
+    <div class="ph-sub">Set a 4-digit PIN you will not forget.<br>You'll need it every time you withdraw.</div>
+  </div>
+
+  <div class="card">
+    <div class="input-group">
+      <label>Enter PIN</label>
+      <div class="input-wrap"><input type="password" id="setPin" placeholder="Enter 4-digit PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" /></div>
+    </div>
+    <div class="input-group">
+      <label>Confirm PIN</label>
+      <div class="input-wrap"><input type="password" id="confirmPin" placeholder="Re-enter 4-digit PIN" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" /></div>
+    </div>
+    <button class="btn-primary" id="updateBtn" onclick="updatePin()" style="margin-top:8px">🔐 Save PIN</button>
+    <p id="pinMessage" class="msg"></p>
+  </div>
+  <div class="footer">Fast <span class="sep">|</span> Secure</div>
+</div>
+
+<div id="pinPopup" class="popup-overlay" style="display:none;">
+  <div class="popup-card">
+    <div id="pinUpdatingView" class="update-view"><div class="spinner"></div><p class="update-text">Updating…</p></div>
+    <div id="pinUpdatedView" class="update-view" style="display:none;"><div class="updated-icon">✓</div><p class="update-text updated-text">PIN Updated</p><button class="btn-primary" onclick="go('dashboard.html')" style="margin-top:20px; width:100%">Back to Dashboard</button></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+var currentUser = null;
+function $(id){ return document.getElementById(id); }
+function go(u){ window.location.href = u; }
+function showMsg(t, type){ var m = $('pinMessage'); m.textContent = t; m.className = 'msg show ' + (type || 'error'); }
+async function init(){
+  currentUser = await requireLogin(); if (!currentUser) return;
+  if (currentUser.pin) { $('setPin').value = currentUser.pin; $('confirmPin').value = currentUser.pin; }
+  ['setPin','confirmPin'].forEach(function(id){ var el = $(id); el.addEventListener('input', function(){ var c = el.value.replace(/[^0-9]/g, ''); if (c !== el.value) el.value = c; }); });
+}
+async function updatePin(){
+  var pin = $('setPin').value.trim(), cf = $('confirmPin').value.trim(), btn = $('updateBtn');
+  if (!pin || pin.length !== 4) return showMsg('PIN must be exactly 4 digits', 'error');
+  if (pin !== cf) return showMsg('PINs do not match', 'error');
+  if (!currentUser) return showMsg('Session expired', 'error');
+  btn.disabled = true; btn.textContent = 'Saving…'; showMsg('');
+  try {
+    await dbUpdateUser(currentUser.userId, { pin: pin });
+    $('pinPopup').style.display = 'flex'; $('pinUpdatingView').style.display = 'flex'; $('pinUpdatedView').style.display = 'none';
+    setTimeout(function(){ $('pinUpdatingView').style.display = 'none'; $('pinUpdatedView').style.display = 'flex'; }, 1500);
+  } catch(e) { showMsg('❌ ' + (e.message || 'Error'), 'error'); btn.disabled = false; btn.textContent = '🔐 Save PIN'; }
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

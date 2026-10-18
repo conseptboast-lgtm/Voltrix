@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F8F9FA">
+<title>Refer & Earn - Voltrix</title>
+<link rel="icon" type="image/png" href="voltrix-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Voltrix">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* --- GLOBAL STYLES (Self-contained to prevent breaking) --- */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif; }
+  body { background-color: #F8F9FA; color: #111827; overflow-x: hidden; min-height: 100vh; padding-bottom: 40px; }
+  a { text-decoration: none; }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+  /* --- HEADER --- */
+  .top-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 10px; background: #F8F9FA; position: sticky; top: 0; z-index: 50; }
+  .back-icon { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2563EB; transition: 0.2s; }
+  .back-icon:active { transform: scale(0.95); background: #EFF6FF; }
+  .header-title { font-size: 18px; font-weight: 900; color: #111827; }
+
+  /* --- MAIN CONTAINER --- */
+  .main-container { padding: 0 20px; max-width: 480px; margin: 0 auto; }
+
+  /* --- HERO CARD --- */
+  .hero-card { background: linear-gradient(135deg, #60A5FA, #2563EB); border-radius: 20px; padding: 24px 20px; color: #FFFFFF; text-align: center; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.25); margin-bottom: 20px; position: relative; overflow: hidden; }
+  .hero-card::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%); border-radius: 50%; }
+  .hero-badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-bottom: 12px; letter-spacing: 0.5px; }
+  .hero-title { font-size: 13px; font-weight: 700; opacity: 0.9; margin-bottom: 6px; }
+  .hero-code { font-size: 32px; font-weight: 900; letter-spacing: 2px; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+  .hero-actions { display: flex; gap: 10px; justify-content: center; }
+  .hero-btn { flex: 1; padding: 12px; border-radius: 12px; font-size: 12.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+  .hero-btn:active { transform: scale(0.97); }
+  .hero-btn-copy { background: #FFFFFF; color: #2563EB; }
+  .hero-btn-share { background: rgba(255,255,255,0.15); color: #FFFFFF; border: 1.5px solid rgba(255,255,255,0.4); }
+
+  /* --- STATS --- */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 16px; padding: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+  .stat-icon { font-size: 20px; margin-bottom: 6px; }
+  .stat-value { font-size: 20px; font-weight: 900; color: #111827; }
+  .stat-value.gold { color: #2563EB; }
+  .stat-label { font-size: 11px; font-weight: 700; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+  /* --- LINK CARD --- */
+  .link-card { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+  .link-header { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #374151; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .link-dot { width: 8px; height: 8px; background: #2563EB; border-radius: 50%; }
+  .link-value { background: #F3F4F6; padding: 14px; border-radius: 10px; font-size: 12.5px; font-weight: 600; color: #4B5563; word-break: break-all; margin-bottom: 12px; font-family: monospace; }
+  .link-btn { width: 100%; padding: 14px; background: #EFF6FF; color: #2563EB; font-size: 13px; font-weight: 800; border-radius: 12px; border: 1.5px solid rgba(37,99,235,0.2); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .link-btn:active { background: #DBEAFE; transform: scale(0.98); }
+
+  /* --- SHARE GRID --- */
+  .share-title { font-size: 13px; font-weight: 900; color: #111827; margin-bottom: 10px; }
+  .share-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  .share-btn { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 14px; padding: 14px 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: 0.2s; }
+  .share-btn:active { transform: scale(0.97); background: #EFF6FF; border-color: #2563EB; }
+  .share-icon { font-size: 22px; }
+  .share-label { font-size: 10.5px; font-weight: 800; color: #374151; }
+
+  /* --- HOW IT WORKS --- */
+  .info-card { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+  .info-header { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 900; color: #111827; margin-bottom: 16px; }
+  .info-step { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .info-step:last-child { margin-bottom: 0; }
+  .step-num { width: 24px; height: 24px; background: #EFF6FF; color: #2563EB; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0; border: 1.5px solid rgba(37,99,235,0.2); }
+  .step-text { font-size: 13px; font-weight: 600; color: #4B5563; line-height: 1.4; padding-top: 3px; }
+  .step-text b { color: #2563EB; }
+
+  /* --- FRIENDS LIST --- */
+  .friends-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .friends-title { font-size: 14px; font-weight: 900; color: #111827; }
+  .friends-count { font-size: 11px; font-weight: 900; background: #EFF6FF; color: #2563EB; padding: 4px 10px; border-radius: 12px; }
+  
+  .friend-card { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+  .friend-avatar { width: 40px; height: 40px; border-radius: 50%; background: #2563EB; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; flex-shrink: 0; }
+  .friend-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .friend-name { font-size: 13.5px; font-weight: 800; color: #111827; }
+  .friend-sub { font-size: 11px; font-weight: 600; color: #6B7280; }
+  .friend-bonus { font-size: 13px; font-weight: 900; color: #16A34A; }
+
+  .empty-state { text-align: center; padding: 30px 20px; background: #FFFFFF; border: 1.5px dashed #E5E7EB; border-radius: 16px; }
+  .empty-icon { font-size: 32px; margin-bottom: 10px; }
+  .empty-title { font-size: 14px; font-weight: 900; color: #111827; margin-bottom: 4px; }
+  .empty-sub { font-size: 12px; font-weight: 600; color: #6B7280; }
+
+  /* --- FOOTER & TOAST --- */
+  .footer { margin-top: 24px; text-align: center; font-size: 11px; color: #9CA3AF; font-weight: 700; padding-bottom: 20px; }
+  .footer .sep { color: #2563EB; margin: 0 6px; font-weight: 900; }
+  .footer .copy { display: block; margin-top: 6px; font-size: 10px; color: #D1D5DB; }
+  
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #111827; color: #FFFFFF; padding: 12px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; opacity: 0; transition: all 0.3s ease; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; width: max-content; max-width: 90%; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.success { background: #16A34A; }
+  .toast.error { background: #DC2626; }
+</style>
+</head>
+<body>
+
+<div class="main-container">
+  <header class="top-header">
+    <button class="back-icon" onclick="go('dashboard.html')">←</button>
+    <h1 class="header-title">Refer & Earn</h1>
+    <div style="width:40px"></div>
+  </header>
+
+  <!-- HERO CARD -->
+  <div class="hero-card">
+    <div class="hero-badge">🎁 EARN ₦200 PER FRIEND</div>
+    <div class="hero-title">Your Referral Code</div>
+    <div class="hero-code" id="myReferralCode">— — —</div>
+    <div class="hero-actions">
+      <button class="hero-btn hero-btn-copy" onclick="copyRefCode()">
+        <span>📋</span> Copy Code
+      </button>
+      <button class="hero-btn hero-btn-share" onclick="shareRef()">
+        <span>📤</span> Share Link
+      </button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-value" id="totalRef">0</div>
+      <div class="stat-label">Referrals</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💰</div>
+      <div class="stat-value gold" id="refEarn">₦0</div>
+      <div class="stat-label">Earned</div>
+    </div>
+  </div>
+
+  <!-- UNIQUE LINK -->
+  <div class="link-card">
+    <div class="link-header">
+      <span class="link-dot"></span> Your Unique Link
+    </div>
+    <div class="link-value" id="myReferralLink">Loading…</div>
+    <button class="link-btn" onclick="copyLink()">📎 Copy Link</button>
+  </div>
+
+  <!-- SHARE ROW -->
+  <div class="share-title">Share via</div>
+  <div class="share-grid">
+    <button class="share-btn" onclick="shareWhatsApp()">
+      <div class="share-icon">💬</div>
+      <div class="share-label">WhatsApp</div>
+    </button>
+    <button class="share-btn" onclick="shareTelegram()">
+      <div class="share-icon">✈️</div>
+      <div class="share-label">Telegram</div>
+    </button>
+    <button class="share-btn" onclick="shareNative()">
+      <div class="share-icon">📤</div>
+      <div class="share-label">More</div>
+    </button>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="info-card">
+    <div class="info-header"><span>💡</span> How It Works</div>
+    <div class="info-step">
+      <div class="step-num">1</div>
+      <div class="step-text">Share your code with friends</div>
+    </div>
+    <div class="info-step">
+      <div class="step-num">2</div>
+      <div class="step-text">They register using your code</div>
+    </div>
+    <div class="info-step">
+      <div class="step-num">3</div>
+      <div class="step-text">You earn <b>₦200</b> per referral 🎉</div>
+    </div>
+    <div class="info-step">
+      <div class="step-num">∞</div>
+      <div class="step-text">Unlimited referrals — no limit</div>
+    </div>
+  </div>
+
+  <!-- FRIENDS LIST -->
+  <div class="friends-header">
+    <div class="friends-title">Your Referrals</div>
+    <div class="friends-count" id="friendsCount">0</div>
+  </div>
+  <div id="refFriendsList"></div>
+
+  <div class="footer">Fast <span class="sep">|</span> Secure<span class="copy">All rights reserved © 2026</span></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+var currentUser = null;
+var referralCode = '';
+var referralLink = '';
+
+function $(id){ return document.getElementById(id); }
+function go(url){ window.location.href = url; }
+
+/* ---------- Toast Notification ---------- */
+function showToast(message, type){
+  var t = $('toast');
+  if (!t) return;
+  t.textContent = message;
+  t.className = 'toast show ' + (type || 'success');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function(){ t.className = 'toast'; }, 3000);
+}
+
+/* ---------- Safe Copy Function ---------- */
+function copyText(text){
+  return new Promise(function(resolve){
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(function(){ resolve(true); }).catch(function(){ resolve(fallbackCopy(text)); });
+      return;
+    }
+    resolve(fallbackCopy(text));
+  });
+}
+function fallbackCopy(text){
+  try {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    var ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch(e){ return false; }
+}
+
+/* ---------- Load Referral Data ---------- */
+async function loadReferral(){
+  try {
+    currentUser = await requireLogin();
+    if (!currentUser) return;
+
+    referralCode = currentUser.referralCode || currentUser.referral_code || '';
+    
+    // If no code exists, generate one
+    if (!referralCode) {
+      var phone = (currentUser.phone || '').replace(/[^0-9]/g, '');
+      var idSuffix = currentUser.userId ? currentUser.userId.slice(-6) : Math.floor(Math.random() * 900000 + 100000);
+      referralCode = 'V' + (phone.slice(-6) || idSuffix) + '20';
+      
+      try { 
+        await dbUpdateUser(currentUser.userId, { referral_code: referralCode }); 
+      } catch(e) { 
+        console.error("Could not save referral code to DB:", e); 
+      }
+    }
+
+    // Build the referral link (Works on localhost and live domain)
+    var baseUrl = window.location.origin;
+    if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')) {
+      // For local testing, just use the file path
+      referralLink = baseUrl + '/register.html?ref=' + referralCode;
+    } else {
+      referralLink = baseUrl + '/register.html?ref=' + referralCode;
+    }
+
+    // Update UI
+    if ($('myReferralCode')) $('myReferralCode').textContent = referralCode;
+    if ($('myReferralLink')) $('myReferralLink').textContent = referralLink;
+    if ($('totalRef')) $('totalRef').textContent = currentUser.referralCount || 0;
+    if ($('refEarn')) $('refEarn').textContent = '₦' + Number(currentUser.referralEarnings || 0).toLocaleString('en-NG');
+
+    await loadFriends();
+  } catch (e) {
+    console.error("Error loading referral data:", e);
+    showToast("Could not load referral data", "error");
+  }
+}
+
+/* ---------- Load Friends List from Supabase ---------- */
+async function loadFriends(){
+  var list = $('refFriendsList');
+  if (!list) return;
+  
+  try {
+    // Query the users table for anyone referred by this code
+    var { data, error } = await supabaseClient
+      .from('users')
+      .select('full_name, phone, created_at')
+      .eq('referred_by', referralCode)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    if ($('friendsCount')) $('friendsCount').textContent = (data || []).length;
+
+    if (!data || data.length === 0) {
+      list.innerHTML =
+        '<div class="empty-state">' +
+          '<div class="empty-icon">🎁</div>' +
+          '<div class="empty-title">No referrals yet</div>' +
+          '<div class="empty-sub">Share your link to start earning</div>' +
+        '</div>';
+      return;
+    }
+
+    list.innerHTML = data.map(function(f){
+      var name = f.full_name || 'User';
+      var phone = f.phone || '';
+      var masked = phone.length >= 7 ? phone.slice(0,4) + '****' + phone.slice(-3) : phone;
+      var date = new Date(f.created_at);
+      var dateStr = date.toLocaleDateString('en-GB');
+      var initial = name.charAt(0).toUpperCase();
+
+      return '<div class="friend-card">' +
+        '<div class="friend-avatar">' + initial + '</div>' +
+        '<div class="friend-info">' +
+          '<div class="friend-name">' + name + '</div>' +
+          '<div class="friend-sub">' + masked + ' · ' + dateStr + '</div>' +
+        '</div>' +
+        '<div class="friend-bonus">+₦200</div>' +
+      '</div>';
+    }).join('');
+
+  } catch(e){
+    console.error("Error loading friends:", e);
+    list.innerHTML =
+      '<div class="empty-state">' +
+        '<div class="empty-icon">⚠️</div>' +
+        '<div class="empty-title">Could not load</div>' +
+        '<div class="empty-sub">Please check your internet connection</div>' +
+      '</div>';
+  }
+}
+
+/* ---------- Action Functions ---------- */
+async function copyRefCode(){
+  if (!referralCode) return showToast('Loading…', 'error');
+  var ok = await copyText(referralCode);
+  if (ok) showToast('✅ Code copied: ' + referralCode, 'success');
+  else prompt('Copy your code:', referralCode);
+}
+
+async function copyLink(){
+  if (!referralLink) return showToast('Loading…', 'error');
+  var ok = await copyText(referralLink);
+  if (ok) showToast('✅ Link copied!', 'success');
+  else prompt('Copy this link:', referralLink);
+}
+
+async function shareRef(){
+  if (!referralLink) return showToast('Loading…', 'error');
+  var message = 'Join Voltrix and start earning! 💰\n\nUse my code: ' + referralCode + '\n' + referralLink;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title:'Join Voltrix', text:'Use my code: ' + referralCode, url: referralLink });
+      return;
+    } catch(e){ if (e.name === 'AbortError') return; }
+  }
+  var ok = await copyText(message);
+  if (ok) showToast('✅ Link copied!', 'success');
+  else prompt('Copy this:', referralLink);
+}
+
+function shareWhatsApp(){
+  if (!referralLink) return;
+  var msg = 'Join Voltrix and start earning! 💰\n\nUse my code: ' + referralCode + '\n' + referralLink;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function shareTelegram(){
+  if (!referralLink) return;
+  var msg = 'Join Voltrix and earn daily! 💰';
+  window.open('https://t.me/share/url?url=' + encodeURIComponent(referralLink) + '&text=' + encodeURIComponent(msg), '_blank');
+}
+
+async function shareNative(){ await shareRef(); }
+
+/* ---------- Initialize ---------- */
+document.addEventListener('DOMContentLoaded', function(){
+  // Safety check to ensure supabase.js loaded correctly
+  if (typeof requireLogin !== 'function') {
+    alert("Critical Error: supabase.js is missing or failed to load.");
+    return;
+  }
+  loadReferral();
+});
+</script>
+</body>
+</html>

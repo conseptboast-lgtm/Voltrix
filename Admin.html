@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - VOLTRIX</title>
+<style>
+  :root { --primary: #2563EB; --black: #111827; --gray: #6B7280; --gray-light: #F9FAFB; --border: #E5E7EB; --white: #FFFFFF; --success: #16A34A; --danger: #DC2626; --warning: #F59E0B; --purple: #7C3AED; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--gray-light); color: var(--black); min-height: 100vh; padding-bottom: 40px; }
+  
+  .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+  .login-box { background: #FFFFFF; border-radius: 24px; padding: 32px; max-width: 380px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.1); text-align: center; }
+  .login-box h1 { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 8px; }
+  .login-box p { font-size: 13px; color: var(--gray); margin-bottom: 24px; }
+  .login-box input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 14px; }
+  .login-box button { width: 100%; padding: 14px; background: var(--primary); color: #FFFFFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; }
+  
+  .admin-app { display: none; }
+  .header { background: linear-gradient(135deg, #1E40AF, #2563EB); padding: 20px; color: #FFFFFF; box-shadow: 0 8px 25px rgba(37,99,235,0.3); display: flex; justify-content: space-between; align-items: center; }
+  .header h1 { font-size: 18px; font-weight: 800; }
+  .header button { background: rgba(255,255,255,0.2); color: #FFF; border: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  
+  .tabs { display: flex; gap: 8px; padding: 16px 20px; overflow-x: auto; background: #FFFFFF; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: 700; white-space: nowrap; background: var(--gray-light); color: var(--gray); border: none; cursor: pointer; }
+  .tab.active { background: var(--primary); color: #FFFFFF; }
+  
+  .content { padding: 20px; max-width: 900px; margin: 0 auto; }
+  .card { background: #FFFFFF; border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .card-title { font-size: 15px; font-weight: 800; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+  
+  .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+  .stat-card { background: #FFFFFF; border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+  .stat-label { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; margin-bottom: 6px; }
+  .stat-value { font-size: 22px; font-weight: 900; color: var(--primary); }
+  .stat-value.green { color: var(--success); }
+  .stat-value.red { color: var(--danger); }
+  .stat-value.purple { color: var(--purple); }
+  
+  .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--gray-light); border-radius: 12px; margin-bottom: 8px; border: 1px solid #F3F4F6; gap: 8px; flex-wrap: wrap; }
+  .list-item-info { flex: 1; min-width: 150px; }
+  .list-item-name { font-size: 13px; font-weight: 800; color: var(--black); }
+  .list-item-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .list-item-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  
+  .btn { padding: 7px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; border: none; cursor: pointer; transition: 0.2s; }
+  .btn:active { transform: scale(0.95); }
+  .btn-approve { background: #DCFCE7; color: var(--success); }
+  .btn-reject { background: #FEE2E2; color: var(--danger); }
+  .btn-primary { background: var(--primary); color: #FFFFFF; }
+  .btn-warning { background: #FEF3C7; color: #B45309; }
+  .btn-purple { background: #EDE9FE; color: var(--purple); }
+  .btn-block { width: 100%; padding: 12px; margin-top: 12px; font-size: 13px; border-radius: 10px; }
+  
+  .input-group { margin-bottom: 12px; }
+  .input-group label { display: block; font-size: 11px; font-weight: 700; color: var(--gray); margin-bottom: 6px; text-transform: uppercase; }
+  .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-weight: 600; outline: none; font-family: inherit; }
+  
+  .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+  .badge-pending { background: #FEF3C7; color: #B45309; }
+  .badge-approved { background: #DCFCE7; color: var(--success); }
+  .badge-rejected { background: #FEE2E2; color: var(--danger); }
+  .badge-banned { background: #FEE2E2; color: var(--danger); }
+  .badge-lvl1 { background: #DBEAFE; color: #1E40AF; }
+  .badge-lvl2 { background: #EDE9FE; color: #6D28D9; }
+  .badge-lvl3 { background: #FCE7F3; color: #BE185D; }
+  
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--gray); font-size: 13px; font-weight: 600; }
+  .hidden { display: none !important; }
+  .refresh-btn { background: var(--gray-light); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <h1>⚙️ VOLTRIX Admin</h1>
+    <p>Enter admin password to continue</p>
+    <input type="password" id="adminPass" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()">
+    <button onclick="adminLogin()">Login</button>
+  </div>
+</div>
+
+<div id="adminApp" class="admin-app">
+  <div class="header">
+    <h1>⚙️ VOLTRIX Admin</h1>
+    <button onclick="adminLogout()">Logout</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('dashboard', this)">📊 Dashboard</button>
+    <button class="tab" onclick="showTab('deposits', this)">💰 Deposits</button>
+    <button class="tab" onclick="showTab('withdrawals', this)">💸 Withdrawals</button>
+    <button class="tab" onclick="showTab('users', this)">👥 Users</button>
+    <button class="tab" onclick="showTab('referrals', this)">🔗 Referrals</button>
+    <button class="tab" onclick="showTab('online', this)">🟢 Online</button>
+    <button class="tab" onclick="showTab('gift', this)">🎁 Gift Codes</button>
+    <button class="tab" onclick="showTab('notif', this)">📬 Notifications</button>
+    <button class="tab" onclick="showTab('message', this)">💬 Personal Msg</button>
+    <button class="tab" onclick="showTab('chat', this)">🗨️ Chat</button>
+    <button class="tab" onclick="showTab('plans', this)">💎 VIP Plans</button>
+    <button class="tab" onclick="showTab('tasks', this)">🔄 Reset Tasks</button>
+    <button class="tab" onclick="showTab('checkin', this)">✅ Reset Check-in</button>
+  </div>
+
+  <div class="content">
+    <div id="tab-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value" id="stUsers">0</div></div>
+        <div class="stat-card"><div class="stat-label">Active VIPs</div><div class="stat-value green" id="stVips">0</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Deposits</div><div class="stat-value" id="stDep">0</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Withdrawals</div><div class="stat-value red" id="stWit">0</div></div>
+        <div class="stat-card"><div class="stat-label">Total Referrals</div><div class="stat-value purple" id="stRefs">0</div></div>
+        <div class="stat-card"><div class="stat-label">Referral Earnings</div><div class="stat-value green" id="stRefEarn">₦0</div></div>
+      </div>
+      <div class="card"><div class="card-title">💵 Total Deposits (Approved)</div><div class="stat-value green" id="stTotDep">₦0</div></div>
+      <div class="card"><div class="card-title">💸 Total Withdrawals (Approved)</div><div class="stat-value red" id="stTotWit">₦0</div></div>
+      <button class="btn btn-primary btn-block" onclick="loadAll()">🔄 Refresh Data</button>
+    </div>
+
+    <div id="tab-deposits" class="hidden">
+      <div class="card">
+        <div class="card-title">💰 Deposit Requests <button class="refresh-btn" onclick="loadAll()">Refresh</button></div>
+        <div id="depositsList"><div class="empty-state">Loading...</div></div>
+      </div>
+    </div>
+
+    <div id="tab-withdrawals" class="hidden">
+      <div class="card">
+        <div class="card-title">💸 Withdrawal Requests <button class="refresh-btn" onclick="loadAll()">Refresh</button></div>
+        <div id="withdrawalsList"><div class="empty-state">Loading...</div></div>
+      </div>
+    </div>
+
+    <div id="tab-users" class="hidden">
+      <div class="card">
+        <div class="card-title">👥 All Users <button class="refresh-btn" onclick="loadAll()">Refresh</button></div>
+        <div id="usersList"><div class="empty-state">Loading...</div></div>
+      </div>
+    </div>
+
+    <div id="tab-referrals" class="hidden">
+      <div class="card">
+        <div class="card-title">🔗 Referral Overview <button class="refresh-btn" onclick="loadAll()">Refresh</button></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Level 1</div><div class="stat-value" id="refLvl1Count">0</div></div>
+          <div class="stat-card"><div class="stat-label">Level 2</div><div class="stat-value purple" id="refLvl2Count">0</div></div>
+          <div class="stat-card"><div class="stat-label">Level 3</div><div class="stat-value red" id="refLvl3Count">0</div></div>
+          <div class="stat-card"><div class="stat-label">Total Bonus</div><div class="stat-value green" id="refTotalBonus">₦0</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">👤 View Referrals By User</div>
+        <div class="input-group"><label>Select User</label><select id="refUserSelect" onchange="renderUserReferrals()"><option value="">-- Select User --</option></select></div>
+      </div>
+      <div id="userReferralsContainer"></div>
+    </div>
+
+    <div id="tab-online" class="hidden">
+      <div class="card">
+        <div class="card-title">🟢 Online Users</div>
+        <div id="onlineList"><div class="empty-state">Loading...</div></div>
+      </div>
+    </div>
+
+    <div id="tab-gift" class="hidden">
+      <div class="card">
+        <div class="card-title">🎁 Create Gift Code</div>
+        <div class="input-group"><label>Gift Code</label><input type="text" id="giftCode" placeholder="e.g. WELCOME500"></div>
+        <div class="input-group"><label>Reward Amount (₦)</label><input type="number" id="giftAmount" placeholder="e.g. 500"></div>
+        <div class="input-group"><label>Max Uses</label><input type="number" id="giftMaxUses" placeholder="e.g. 100" value="100"></div>
+        <button class="btn btn-primary btn-block" onclick="createGiftCode()">Create Gift Code</button>
+      </div>
+      <div class="card">
+        <div class="card-title">🎁 All Gift Codes</div>
+        <div id="giftList"><div class="empty-state">Loading...</div></div>
+      </div>
+    </div>
+
+    <div id="tab-notif" class="hidden">
+      <div class="card">
+        <div class="card-title">📬 Send General Notification</div>
+        <div class="input-group"><label>Title</label><input type="text" id="notifTitle" placeholder="e.g. New Update"></div>
+        <div class="input-group"><label>Message</label><textarea id="notifMessage" rows="3" placeholder="Type your message..."></textarea></div>
+        <button class="btn btn-primary btn-block" onclick="sendNotification()">Send to All Users</button>
+      </div>
+      <div class="card">
+        <div class="card-title">📬 Sent Notifications</div>
+        <div id="notifList"><div class="empty-state">Loading...</div></div>
+      </div>
+    </div>
+
+    <div id="tab-message" class="hidden">
+      <div class="card">
+        <div class="card-title">💬 Send Personal Message</div>
+        <div class="input-group"><label>Select User</label><select id="msgUserSelect"><option value="">-- Select User --</option></select></div>
+        <div class="input-group"><label>Message</label><textarea id="msgText" rows="3" placeholder="Type your message..."></textarea></div>
+        <button class="btn btn-primary btn-block" onclick="sendPersonalMessage()">Send Message</button>
+      </div>
+    </div>
+
+    <div id="tab-chat" class="hidden">
+      <div class="card">
+        <div class="card-title">🗨️ User Chats</div>
+        <div class="input-group"><label>Select User</label><select id="chatUserSelect" onchange="loadChat()"><option value="">-- Select User --</option></select></div>
+        <div id="chatMessages" style="max-height:400px;overflow-y:auto;background:#F9FAFB;border-radius:12px;padding:12px;margin-bottom:12px;min-height:200px;"><div class="empty-state">Select a user to view chat</div></div>
+        <div class="input-group" style="display:flex;gap:8px;">
+          <input type="text" id="chatReply" placeholder="Type reply..." style="flex:1;">
+          <button class="btn btn-primary" onclick="sendAdminReply()">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-plans" class="hidden">
+      <div class="card">
+        <div class="card-title">💎 VIP Plans</div>
+        <div id="plansList"></div>
+      </div>
+    </div>
+
+    <div id="tab-tasks" class="hidden">
+      <div class="card">
+        <div class="card-title">🔄 Reset All Tasks</div>
+        <p style="font-size:13px;color:#6B7280;margin-bottom:14px;">Reset all users' daily tasks.</p>
+        <button class="btn btn-warning btn-block" onclick="resetAllTasks()">Reset All Users' Tasks</button>
+      </div>
+      <div class="card">
+        <div class="card-title">🔄 Reset Single User Task</div>
+        <div class="input-group"><label>Select User</label><select id="resetUserSelect"><option value="">-- Select User --</option></select></div>
+        <button class="btn btn-warning btn-block" onclick="resetSingleTask()">Reset This User's Task</button>
+      </div>
+    </div>
+
+    <div id="tab-checkin" class="hidden">
+      <div class="card">
+        <div class="card-title">✅ Reset All Check-ins</div>
+        <button class="btn btn-warning btn-block" onclick="resetAllCheckins()">Reset All Users' Check-ins</button>
+      </div>
+      <div class="card">
+        <div class="card-title">✅ Reset Single User Check-in</div>
+        <div class="input-group"><label>Select User</label><select id="resetCheckinSelect"><option value="">-- Select User --</option></select></div>
+        <button class="btn btn-warning btn-block" onclick="resetSingleCheckin()">Reset This User's Check-in</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+var ADMIN_PASSWORD = 'voltrix2026';
+var allUsers = [], allDeposits = [], allWithdrawals = [], allGifts = [], allNotifs = [];
+var selectedChatUser = null;
+var REFERRAL_PERCENT = { level1: 10, level2: 3, level3: 1 };
+
+function $(id){ return document.getElementById(id); }
+function f(n){ return '₦' + Number(n || 0).toLocaleString('en-NG', { maximumFractionDigits: 2 }); }
+
+function adminLogin() { if ($('adminPass').value === ADMIN_PASSWORD) { sessionStorage.setItem('voltrix_admin', '1'); showAdmin(); } else { alert('❌ Incorrect password'); } }
+function adminLogout() { sessionStorage.removeItem('voltrix_admin'); location.reload(); }
+function showAdmin() { $('loginScreen').style.display = 'none'; $('adminApp').style.display = 'block'; loadAll(); }
+
+function showTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  ['dashboard','deposits','withdrawals','users','referrals','online','gift','notif','message','chat','plans','tasks','checkin'].forEach(function(t){ $('tab-' + t).classList.add('hidden'); });
+  $('tab-' + tab).classList.remove('hidden');
+  if (tab === 'users') renderUsers();
+  if (tab === 'deposits') renderDeposits();
+  if (tab === 'withdrawals') renderWithdrawals();
+  if (tab === 'referrals') renderReferralOverview();
+  if (tab === 'online') renderOnline();
+  if (tab === 'gift') renderGifts();
+  if (tab === 'notif') renderNotifs();
+  if (tab === 'plans') renderPlans();
+}
+
+async function loadAll() {
+  try {
+    var { data: users } = await supabaseClient.from('users').select('*').order('created_at', { ascending: false }); allUsers = users || [];
+    var { data: deposits } = await supabaseClient.from('deposits').select('*').order('created_at', { ascending: false }); allDeposits = deposits || [];
+    var { data: withdrawals } = await supabaseClient.from('withdrawals').select('*').order('created_at', { ascending: false }); allWithdrawals = withdrawals || [];
+    try { var { data: gifts } = await supabaseClient.from('gift_codes').select('*').order('created_at', { ascending: false }); allGifts = gifts || []; } catch(e){}
+    try { var { data: notifs } = await supabaseClient.from('notifications').select('*').order('created_at', { ascending: false }).limit(20); allNotifs = notifs || []; } catch(e){}
+    
+    updateDashboard(); populateUserSelects();
+    if (!$('tab-users').classList.contains('hidden')) renderUsers();
+    if (!$('tab-deposits').classList.contains('hidden')) renderDeposits();
+    if (!$('tab-withdrawals').classList.contains('hidden')) renderWithdrawals();
+    if (!$('tab-referrals').classList.contains('hidden')) renderReferralOverview();
+    if (!$('tab-online').classList.contains('hidden')) renderOnline();
+    if (!$('tab-gift').classList.contains('hidden')) renderGifts();
+    if (!$('tab-notif').classList.contains('hidden')) renderNotifs();
+  } catch (e) { console.error(e); }
+}
+
+function updateDashboard() {
+  $('stUsers').textContent = allUsers.length;
+  $('stVips').textContent = allUsers.filter(function(u){ return u.current_level && u.current_level !== 'Slot 0' && u.current_level !== 'Rox 0'; }).length;
+  $('stDep').textContent = allDeposits.filter(function(d){ return d.status === 'pending'; }).length;
+  $('stWit').textContent = allWithdrawals.filter(function(w){ return w.status === 'pending'; }).length;
+  $('stRefs').textContent = allUsers.filter(function(u){ return u.referred_by; }).length;
+  $('stRefEarn').textContent = f(allUsers.reduce(function(s,u){ return s + Number(u.referral_earnings || 0); }, 0));
+  var td = allDeposits.filter(function(d){ return d.status === 'approved'; }).reduce(function(s,d){ return s + Number(d.amount||0); }, 0);
+  var tw = allWithdrawals.filter(function(w){ return w.status === 'approved'; }).reduce(function(s,w){ return s + Number(w.amount||0); }, 0);
+  $('stTotDep').textContent = f(td); $('stTotWit').textContent = f(tw);
+}
+
+function getLevel1(targetUser) { if (!targetUser || !targetUser.referral_code) return []; return allUsers.filter(function(u){ return u.referred_by === targetUser.referral_code; }); }
+function getLevel2(targetUser) { var lvl1 = getLevel1(targetUser); var lvl1Codes = lvl1.map(function(u){ return u.referral_code; }); return allUsers.filter(function(u){ return lvl1Codes.indexOf(u.referred_by) !== -1; }); }
+function getLevel3(targetUser) { var lvl2 = getLevel2(targetUser); var lvl2Codes = lvl2.map(function(u){ return u.referral_code; }); return allUsers.filter(function(u){ return lvl2Codes.indexOf(u.referred_by) !== -1; }); }
+
+function renderReferralOverview() {
+  var lvl1Total = 0, lvl2Total = 0, lvl3Total = 0, bonusTotal = 0;
+  allUsers.forEach(function(u){ if (!u.referral_code) return; lvl1Total += getLevel1(u).length; lvl2Total += getLevel2(u).length; lvl3Total += getLevel3(u).length; bonusTotal += Number(u.referral_earnings || 0); });
+  $('refLvl1Count').textContent = lvl1Total; $('refLvl2Count').textContent = lvl2Total; $('refLvl3Count').textContent = lvl3Total; $('refTotalBonus').textContent = f(bonusTotal);
+}
+
+function renderUserReferrals() {
+  var userId = $('refUserSelect').value; var container = $('userReferralsContainer');
+  if (!userId) { container.innerHTML = ''; return; }
+  var targetUser = allUsers.find(function(u){ return u.user_id === userId; });
+  if (!targetUser) { container.innerHTML = '<div class="empty-state">User not found</div>'; return; }
+  var lvl1 = getLevel1(targetUser), lvl2 = getLevel2(targetUser), lvl3 = getLevel3(targetUser);
+  var html = '';
+  
+  html += '<div class="card"><div class="level-header level-1-header">🥇 LEVEL 1 — ' + lvl1.length + ' users</div>';
+  html += lvl1.length === 0 ? '<div class="empty-state">No L1 referrals</div>' : lvl1.map(function(u){
+    var pb = Number(u.total_deposit || 0) * (REFERRAL_PERCENT.level1 / 100);
+    return '<div class="ref-user-card"><div class="ref-user-header"><div><div class="ref-user-name">' + (u.full_name || 'User') + '</div><div class="ref-user-info">' + (u.phone || '') + ' • Bal: ' + f(u.balance) + '</div><div class="ref-user-info">Deposit: ' + f(u.total_deposit) + ' • Bonus: ' + f(pb) + '</div></div><span class="badge badge-lvl1">L1</span></div><div class="ref-actions"><button class="btn btn-approve" onclick="creditReferral(\'' + targetUser.user_id + '\',' + pb + ',\'L1\')">Credit ' + f(pb) + '</button><button class="btn btn-primary" onclick="creditCustomReferral(\'' + targetUser.user_id + '\',\'L1\')">Custom</button></div></div>';
+  }).join('') + '</div>';
+  
+  html += '<div class="card"><div class="level-header level-2-header">🥈 LEVEL 2 — ' + lvl2.length + ' users</div>';
+  html += lvl2.length === 0 ? '<div class="empty-state">No L2 referrals</div>' : lvl2.map(function(u){
+    var pb = Number(u.total_deposit || 0) * (REFERRAL_PERCENT.level2 / 100);
+    return '<div class="ref-user-card"><div class="ref-user-header"><div><div class="ref-user-name">' + (u.full_name || 'User') + '</div><div class="ref-user-info">' + (u.phone || '') + ' • Bal: ' + f(u.balance) + '</div><div class="ref-user-info">Deposit: ' + f(u.total_deposit) + ' • Bonus: ' + f(pb) + '</div></div><span class="badge badge-lvl2">L2</span></div><div class="ref-actions"><button class="btn btn-approve" onclick="creditReferral(\'' + targetUser.user_id + '\',' + pb + ',\'L2\')">Credit ' + f(pb) + '</button><button class="btn btn-primary" onclick="creditCustomReferral(\'' + targetUser.user_id + '\',\'L2\')">Custom</button></div></div>';
+  }).join('') + '</div>';
+  
+  html += '<div class="card"><div class="level-header level-3-header">🥉 LEVEL 3 — ' + lvl3.length + ' users</div>';
+  html += lvl3.length === 0 ? '<div class="empty-state">No L3 referrals</div>' : lvl3.map(function(u){
+    var pb = Number(u.total_deposit || 0) * (REFERRAL_PERCENT.level3 / 100);
+    return '<div class="ref-user-card"><div class="ref-user-header"><div><div class="ref-user-name">' + (u.full_name || 'User') + '</div><div class="ref-user-info">' + (u.phone || '') + ' • Bal: ' + f(u.balance) + '</div><div class="ref-user-info">Deposit: ' + f(u.total_deposit) + ' • Bonus: ' + f(pb) + '</div></div><span class="badge badge-lvl3">L3</span></div><div class="ref-actions"><button class="btn btn-approve" onclick="creditReferral(\'' + targetUser.user_id + '\',' + pb + ',\'L3\')">Credit ' + f(pb) + '</button><button class="btn btn-primary" onclick="creditCustomReferral(\'' + targetUser.user_id + '\',\'L3\')">Custom</button></div></div>';
+  }).join('') + '</div>';
+  
+  container.innerHTML = html;
+}
+
+async function creditReferral(userId, amount, level) {
+  amount = Math.round(amount);
+  if (amount <= 0) return alert('No bonus to credit (amount is 0)');
+  if (!confirm('Credit ' + f(amount) + ' to this user as ' + level + ' referral bonus?')) return;
+  var user = allUsers.find(function(u){ return u.user_id === userId; });
+  if (!user) return;
+  await supabaseClient.from('users').update({ balance: Number(user.balance || 0) + amount, referral_earnings: Number(user.referral_earnings || 0) + amount, referral_count: Number(user.referral_count || 0) + 1 }).eq('user_id', userId);
+  try { await supabaseClient.from('referral_bonuses').insert([{ user_id: userId, amount: amount, level: level, note: 'Admin credit' }]); } catch(e){}
+  alert('✅ ' + f(amount) + ' credited as ' + level + ' bonus!');
+  loadAll();
+}
+function creditCustomReferral(userId, level) { var a = prompt('Enter custom referral amount (₦):'); if (!a || isNaN(a) || Number(a) <= 0) return; creditReferral(userId, Number(a), level); }
+
+function renderUsers() {
+  var list = $('usersList');
+  if (allUsers.length === 0) { list.innerHTML = '<div class="empty-state">No users yet</div>'; return; }
+  list.innerHTML = allUsers.map(function(u){
+    var level = (u.current_level && u.current_level !== 'Slot 0' && u.current_level !== 'Rox 0') ? u.current_level : 'No VIP';
+    var spins = u.spin_count || 0;
+    return '<div class="list-item"><div class="list-item-info"><div class="list-item-name">' + (u.full_name || 'User') + ' ' + (u.banned ? '<span class="badge badge-banned">BANNED</span>' : '') + '</div><div class="list-item-sub">' + (u.phone || '') + ' • ' + level + ' • ' + f(u.balance) + '</div><div class="list-item-sub">Spins: <span style="color:#F59E0B;font-weight:900;">' + spins + '</span></div></div><div class="list-item-actions"><button class="btn btn-approve" onclick="creditUser(\'' + u.user_id + '\')">+₦</button><button class="btn btn-warning" onclick="giveSpin(\'' + u.user_id + '\')">🎰 +Spin</button><button class="btn btn-purple" onclick="resetWithdraw(\'' + u.user_id + '\')">🔄 Reset Withdraw</button>' + (u.banned ? '<button class="btn btn-approve" onclick="unbanUser(\'' + u.user_id + '\')">Unban</button>' : '<button class="btn btn-reject" onclick="banUser(\'' + u.user_id + '\')">Ban</button>') + '</div></div>';
+  }).join('');
+}
+
+function renderOnline() {
+  var list = $('onlineList'); var now = Date.now();
+  var online = allUsers.filter(function(u){ if (!u.last_seen) return false; return (now - new Date(u.last_seen).getTime()) < 5 * 60 * 1000; });
+  if (online.length === 0) { list.innerHTML = '<div class="empty-state">No users online</div>'; return; }
+  list.innerHTML = online.map(function(u){ return '<div class="list-item"><div class="list-item-info"><div class="list-item-name">🟢 ' + (u.full_name || 'User') + '</div><div class="list-item-sub">' + (u.phone || '') + '</div></div></div>'; }).join('');
+}
+
+function renderDeposits() {
+  var list = $('depositsList');
+  if (allDeposits.length === 0) { list.innerHTML = '<div class="empty-state">No deposits</div>'; return; }
+  list.innerHTML = allDeposits.map(function(d){
+    var user = allUsers.find(function(u){ return u.user_id === d.user_id; });
+    return '<div class="list-item"><div class="list-item-info"><div class="list-item-name">' + f(d.amount) + ' — ' + (user ? user.full_name : 'Unknown') + '</div><div class="list-item-sub">' + (d.method || 'Deposit') + ' • ' + (user ? user.phone : '') + ' • ' + new Date(d.created_at).toLocaleString() + '</div></div><div class="list-item-actions">' + (d.status === 'pending' ? '<button class="btn btn-approve" onclick="approveDeposit(' + d.id + ')">Approve</button><button class="btn btn-reject" onclick="rejectDeposit(' + d.id + ')">Reject</button>' : '<span class="badge badge-' + d.status + '">' + d.status + '</span>') + '</div></div>';
+  }).join('');
+}
+
+function renderWithdrawals() {
+  var list = $('withdrawalsList');
+  if (allWithdrawals.length === 0) { list.innerHTML = '<div class="empty-state">No withdrawals</div>'; return; }
+  list.innerHTML = allWithdrawals.map(function(w){
+    var user = allUsers.find(function(u){ return u.user_id === w.user_id; });
+    return '<div class="list-item"><div class="list-item-info"><div class="list-item-name">' + f(w.amount) + ' — ' + (user ? user.full_name : 'Unknown') + '</div><div class="list-item-sub">' + (w.bank_name||'') + ' ' + (w.bank_account||'') + ' • ' + (user ? user.phone : '') + '</div></div><div class="list-item-actions">' + (w.status === 'pending' ? '<button class="btn btn-approve" onclick="approveWithdrawal(' + w.id + ')">Approve</button><button class="btn btn-reject" onclick="rejectWithdrawal(' + w.id + ')">Reject</button>' : '<span class="badge badge-' + w.status + '">' + w.status + '</span>') + '</div></div>';
+  }).join('');
+}
+
+function renderGifts() {
+  var list = $('giftList');
+  if (allGifts.length === 0) { list.innerHTML = '<div class="empty-state">No gift codes</div>'; return; }
+  list.innerHTML = allGifts.map(function(g){ return '<div class="list-item"><div class="list-item-info"><div class="list-item-name">' + g.code + ' — ' + f(g.amount) + '</div><div class="list-item-sub">Used ' + (g.used_count || 0) + ' / ' + (g.max_uses || 100) + '</div></div><div class="list-item-actions"><button class="btn btn-reject" onclick="deleteGift(' + g.id + ')">Delete</button></div></div>'; }).join('');
+}
+
+function renderNotifs() {
+  var list = $('notifList');
+  if (allNotifs.length === 0) { list.innerHTML = '<div class="empty-state">No notifications</div>'; return; }
+  list.innerHTML = allNotifs.map(function(n){ return '<div class="list-item"><div class="list-item-info"><div class="list-item-name">' + (n.title || 'Notification') + '</div><div class="list-item-sub">' + (n.message || '') + '</div><div class="list-item-sub">' + new Date(n.created_at).toLocaleString() + '</div></div></div>'; }).join('');
+}
+
+function renderPlans() {
+  var plans = [
+    { level: 'Slot 0 (Internship)', price: 0, daily: 500, days: '3 days only' }, { level: 'Slot 1', price: 15000, daily: 500 }, { level: 'Slot 2', price: 36000, daily: 1200 }, { level: 'Slot 3', price: 77000, daily: 2566.67 }, { level: 'Slot 4', price: 134000, daily: 4466.67 }, { level: 'Slot 5', price: 222000, daily: 7400 }, { level: 'Slot 6', price: 450000, daily: 15000 }, { level: 'Slot 7', price: 550000, daily: 18333.33 }, { level: 'Slot 8', price: 1100000, daily: 36666.67 }, { level: 'Slot 9', price: 2400000, daily: 80000 }, { level: 'Slot 10', price: 3500000, daily: 105000 }, { level: 'Slot 11', price: 5000000, daily: 150000 }
+  ];
+  $('plansList').innerHTML = plans.map(function(p){ return '<div class="list-item"><div class="list-item-info"><div class="list-item-name">' + p.level + '</div><div class="list-item-sub">Price: ' + f(p.price) + ' • Daily: ' + f(p.daily) + (p.days ? ' • ' + p.days : '') + '</div></div></div>'; }).join('');
+}
+
+function populateUserSelects() {
+  var opts = '<option value="">-- Select User --</option>' + allUsers.map(function(u){ return '<option value="' + u.user_id + '">' + (u.full_name || u.phone) + ' (' + u.phone + ')</option>'; }).join('');
+  ['msgUserSelect', 'chatUserSelect', 'resetUserSelect', 'refUserSelect', 'resetCheckinSelect'].forEach(function(id){ if ($(id)) $(id).innerHTML = opts; });
+}
+
+async function approveDeposit(id) {
+  var dep = allDeposits.find(function(d){ return d.id === id; }); if (!dep) return;
+  await supabaseClient.from('deposits').update({ status: 'approved' }).eq('id', id);
+  var user = allUsers.find(function(u){ return u.user_id === dep.user_id; });
+  if (user) { await supabaseClient.from('users').update({ balance: Number(user.balance || 0) + Number(dep.amount), total_deposit: Number(user.total_deposit || 0) + Number(dep.amount) }).eq('user_id', dep.user_id); }
+  alert('✅ Deposit approved!'); loadAll();
+}
+
+async function rejectDeposit(id) { if (!confirm('Reject this deposit?')) return; await supabaseClient.from('deposits').update({ status: 'rejected' }).eq('id', id); loadAll(); }
+
+async function approveWithdrawal(id) {
+  await supabaseClient.from('withdrawals').update({ status: 'approved' }).eq('id', id);
+  alert('✅ Withdrawal approved!'); loadAll();
+}
+
+async function rejectWithdrawal(id) {
+  if (!confirm('Reject? Amount will be refunded.')) return;
+  var w = allWithdrawals.find(function(x){ return x.id === id; });
+  await supabaseClient.from('withdrawals').update({ status: 'rejected' }).eq('id', id);
+  var user = allUsers.find(function(u){ return u.user_id === w.user_id; });
+  if (user) { await supabaseClient.from('users').update({ balance: Number(user.balance || 0) + Number(w.amount) }).eq('user_id', w.user_id); }
+  loadAll();
+}
+
+async function creditUser(userId) { var amount = prompt('Enter amount to credit (₦):'); if (!amount || isNaN(amount)) return; var user = allUsers.find(function(u){ return u.user_id === userId; }); if (!user) return; await supabaseClient.from('users').update({ balance: Number(user.balance || 0) + Number(amount) }).eq('user_id', userId); alert('✅ Credited ' + f(amount)); loadAll(); }
+
+async function giveSpin(userId) {
+  var amount = prompt('How many spins do you want to give this user?', '1');
+  if (!amount || isNaN(amount)) return;
+  var user = allUsers.find(function(u){ return u.user_id === userId; }); if (!user) return;
+  var currentSpins = Number(user.spin_count || 0);
+  await supabaseClient.from('users').update({ spin_count: currentSpins + Number(amount) }).eq('user_id', userId);
+  alert('✅ ' + amount + ' spin(s) given to ' + user.full_name); loadAll();
+}
+
+async function banUser(userId) { if (!confirm('Ban this user?')) return; await supabaseClient.from('users').update({ banned: true, ban_reason: 'Violated terms' }).eq('user_id', userId); loadAll(); }
+async function unbanUser(userId) { await supabaseClient.from('users').update({ banned: false, ban_reason: '' }).eq('user_id', userId); alert('✅ User unbanned'); loadAll(); }
+
+// ⭐ NEW: RESET WITHDRAWAL ⭐
+async function resetWithdraw(userId) {
+  if (!confirm('Reset this user\'s daily withdrawal limit? They will be able to withdraw again today.')) return;
+  var user = allUsers.find(function(u){ return u.user_id === userId; });
+  if (!user) return;
+  await supabaseClient.from('users').update({ last_withdrawal_date: null }).eq('user_id', userId);
+  alert('✅ Withdrawal limit reset for ' + user.full_name);
+  loadAll();
+}
+
+async function createGiftCode() {
+  var code = $('giftCode').value.trim().toUpperCase(); var amount = Number($('giftAmount').value); var maxUses = Number($('giftMaxUses').value) || 100;
+  if (!code || !amount) return alert('Enter code and amount');
+  try { await supabaseClient.from('gift_codes').insert([{ code: code, amount: amount, max_uses: maxUses, used_count: 0, active: true }]); alert('✅ Gift code created!'); $('giftCode').value = ''; $('giftAmount').value = ''; loadAll(); } catch(e) { alert('❌ ' + e.message); }
+}
+async function deleteGift(id) { if (!confirm('Delete this gift code?')) return; await supabaseClient.from('gift_codes').delete().eq('id', id); loadAll(); }
+
+async function sendNotification() {
+  var title = $('notifTitle').value.trim(); var message = $('notifMessage').value.trim();
+  if (!title || !message) return alert('Enter title and message');
+  await supabaseClient.from('notifications').insert([{ title: title, message: message, active: true }]);
+  alert('✅ Notification sent!'); $('notifTitle').value = ''; $('notifMessage').value = ''; loadAll();
+}
+
+async function sendPersonalMessage() {
+  var userId = $('msgUserSelect').value; var message = $('msgText').value.trim();
+  if (!userId || !message) return alert('Select user and enter message');
+  await supabaseClient.from('notifications').insert([{ user_id: userId, title: 'Personal Message', message: message, active: true }]);
+  alert('✅ Message sent!'); $('msgText').value = '';
+}
+
+async function loadChat() {
+  var userId = $('chatUserSelect').value;
+  if (!userId) { $('chatMessages').innerHTML = '<div class="empty-state">Select a user</div>'; return; }
+  selectedChatUser = userId;
+  var { data } = await supabaseClient.from('support_messages').select('*').eq('user_id', userId).order('created_at', { ascending: true }).limit(100);
+  if (!data || data.length === 0) { $('chatMessages').innerHTML = '<div class="empty-state">No messages yet</div>'; return; }
+  $('chatMessages').innerHTML = data.map(function(m){ var isAdmin = m.sender === 'admin'; return '<div style="margin-bottom:8px;text-align:' + (isAdmin ? 'right' : 'left') + ';"><div style="display:inline-block;padding:8px 12px;border-radius:12px;background:' + (isAdmin ? '#2563EB' : '#E5E7EB') + ';color:' + (isAdmin ? '#FFF' : '#111') + ';font-size:13px;font-weight:500;max-width:80%;text-align:left;">' + m.message + '</div><div style="font-size:10px;color:#9CA3AF;margin-top:2px;">' + new Date(m.created_at).toLocaleTimeString() + '</div></div>'; }).join('');
+  $('chatMessages').scrollTop = $('chatMessages').scrollHeight;
+}
+
+async function sendAdminReply() {
+  if (!selectedChatUser) return alert('Select a user first');
+  var text = $('chatReply').value.trim(); if (!text) return;
+  await supabaseClient.from('support_messages').insert([{ user_id: selectedChatUser, sender: 'admin', message: text, read: false }]);
+  $('chatReply').value = ''; loadChat();
+}
+
+async function resetAllTasks() { if (!confirm('Reset ALL users\' daily tasks?')) return; for (var i = 0; i < allUsers.length; i++) { await supabaseClient.from('users').update({ tasks_completed_today: 0, last_task_date: null, charge_progress: 0 }).eq('user_id', allUsers[i].user_id); } alert('✅ All tasks reset!'); loadAll(); }
+async function resetSingleTask() { var userId = $('resetUserSelect').value; if (!userId) return alert('Select a user'); await supabaseClient.from('users').update({ tasks_completed_today: 0, last_task_date: null, charge_progress: 0 }).eq('user_id', userId); alert('✅ Task reset'); loadAll(); }
+
+async function resetAllCheckins() { if (!confirm('Reset ALL users\' check-ins?')) return; for (var i = 0; i < allUsers.length; i++) { await supabaseClient.from('users').update({ last_checkin_date: null }).eq('user_id', allUsers[i].user_id); } alert('✅ All check-ins reset!'); loadAll(); }
+async function resetSingleCheckin() { var userId = $('resetCheckinSelect').value; if (!userId) return alert('Select a user'); await supabaseClient.from('users').update({ last_checkin_date: null }).eq('user_id', userId); alert('✅ Check-in reset'); loadAll(); }
+
+document.addEventListener('DOMContentLoaded', function() { if (sessionStorage.getItem('voltrix_admin') === '1') { showAdmin(); } });
+</script>
+</body>
+</html>
