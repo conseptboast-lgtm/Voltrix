@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOLTRIX - OTP Verification</title>
+  <style>
+    :root { --light-blue: #3b82f6; --black: #1a1a1a; --white: #ffffff; --bg-light: #f0f7ff; --border: #cbd5e1; --success: #16a34a; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: var(--bg-light); color: var(--black); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+    .page-container { width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; }
+    .logo-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
+    .app-icon { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; filter: drop-shadow(0 3px 6px rgba(59, 130, 246, 0.25)); }
+    .brand-logo { width: 130px; height: auto; object-fit: contain; }
+    .card { width: 100%; background: var(--white); border-radius: 20px; padding: 22px 18px; box-shadow: 0 8px 25px rgba(59, 130, 246, 0.08); border: 1px solid #e2e8f0; position: relative; }
+    .form-title { text-align: center; font-size: 0.95rem; font-weight: 800; color: var(--black); margin-bottom: 18px; text-transform: uppercase; letter-spacing: 1px; }
+    .otp-row { display: flex; gap: 8px; margin-bottom: 20px; }
+    .otp-row input { flex: 1; padding: 12px 14px; background: #f8fafc; border: 1.5px solid var(--border); border-radius: 10px; font-size: 15px; font-weight: 700; text-align: center; letter-spacing: 3px; outline: none; transition: 0.2s; }
+    .otp-row input:focus { border-color: var(--light-blue); background: var(--white); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+    .btn-send { padding: 0 16px; background: var(--black); color: var(--white); border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .btn-send:hover { background: #333; }
+    .info-boxes { display: flex; gap: 10px; margin-bottom: 18px; transition: all 0.3s ease; }
+    .info-box { flex: 1; background: #f8fafc; padding: 12px 10px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
+    .info-box p { font-size: 10px; color: #475569; line-height: 1.4; font-weight: 600; }
+    .info-box strong { color: var(--black); display: block; margin-bottom: 2px; font-size: 11px; }
+    .btn-continue { width: 100%; padding: 14px; background: var(--light-blue); color: var(--white); border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25); }
+    .btn-continue:hover { background: #2563eb; transform: translateY(-1px); }
+    .sms-bubble { position: fixed; top: 15px; left: 50%; transform: translateX(-50%) translateY(-20px); width: 92%; max-width: 340px; background: #FFFFFF; border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; padding: 14px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .sms-bubble.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+    .sms-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
+    .sms-sender { font-size: 12px; font-weight: 800; color: var(--black); }
+    .sms-number { font-size: 10px; color: #64748b; font-weight: 600; display: block; }
+    .sms-close { font-size: 18px; font-weight: bold; color: #94a3b8; cursor: pointer; line-height: 1; }
+    .sms-body p { font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 500; }
+    .sms-code-row { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 10px; border: 1px dashed #cbd5e1; margin-top: 8px; }
+    .sms-code { font-size: 18px; font-weight: 900; color: var(--light-blue); letter-spacing: 3px; cursor: pointer; }
+    .btn-copy { background: var(--light-blue); color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .btn-copy:hover { background: #2563eb; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .overlay.show { opacity: 1; visibility: visible; }
+    .popup-content { background: var(--white); padding: 22px 18px; border-radius: 16px; text-align: center; width: 85%; max-width: 260px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); transform: scale(0.9); transition: all 0.3s ease; }
+    .overlay.show .popup-content { transform: scale(1); }
+    .spinner { width: 30px; height: 30px; border: 3px solid #e2e8f0; border-top: 3px solid var(--light-blue); border-radius: 50%; margin: 0 auto 12px auto; animation: spin 0.8s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .popup-content p { font-size: 13px; font-weight: 700; color: var(--black); line-height: 1.4; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="page-container">
+  <div class="logo-wrap">
+    <img src="voltrix-icon.png" alt="Voltrix Icon" class="app-icon" onerror="handleImageError(this)">
+    <img src="voltrix-logo.png" alt="Voltrix Logo" class="brand-logo" onerror="handleImageError(this)">
+  </div>
+  <div class="card">
+    <h2 class="form-title">OTP Verification</h2>
+    <form onsubmit="event.preventDefault(); triggerVerification();">
+      <div class="otp-row">
+        <input type="text" placeholder="••••" maxlength="5" required id="otpInput">
+        <button type="button" class="btn-send" id="sendBtn" onclick="sendOTP()">Send</button>
+      </div>
+      <div class="info-boxes hidden" id="infoBoxes">
+        <div class="info-box"><p><strong>Please wait</strong> while we verify you.</p></div>
+        <div class="info-box"><p><strong>An OTP code</strong> has been sent to you. Do not disclose this page.</p></div>
+      </div>
+      <button type="submit" class="btn-continue">Continue</button>
+    </form>
+  </div>
+</div>
+<div class="sms-bubble" id="smsBubble">
+  <div class="sms-header"><div><span class="sms-sender">Voltrix</span><span class="sms-number" id="userPhoneDisplay">+234 *** *** ****</span></div><div class="sms-close" onclick="closeSMS()">&times;</div></div>
+  <div class="sms-body"><p>Dear User,</p><p>This is your OTP code</p><div class="sms-code-row"><span class="sms-code" id="otpCodeDisplay" onclick="useOTP()">14464</span><button class="btn-copy" onclick="useOTP()">Copy</button></div></div>
+</div>
+<div class="overlay" id="verificationPopup"><div class="popup-content"><div class="spinner"></div><p>Please wait while we verify you...</p></div></div>
+<script>
+  const savedPhone = localStorage.getItem('voltrix_user_phone');
+  const phoneDisplay = document.getElementById('userPhoneDisplay');
+  if (savedPhone) {
+    let formatted = savedPhone;
+    if (/^0\d{10}$/.test(savedPhone)) { formatted = "+234 " + savedPhone.substring(1, 4) + " *** " + savedPhone.substring(7, 11); }
+    else if (/^\d{10}$/.test(savedPhone)) { formatted = "+234 " + savedPhone.substring(0, 3) + " *** " + savedPhone.substring(6, 10); }
+    else { formatted = "+234 " + savedPhone; }
+    phoneDisplay.textContent = formatted;
+  }
+  const generatedOTP = "14464";
+  function sendOTP() {
+    const sendBtn = document.getElementById('sendBtn'); const smsBubble = document.getElementById('smsBubble'); const infoBoxes = document.getElementById('infoBoxes');
+    sendBtn.textContent = 'Sent'; sendBtn.style.background = 'var(--success)'; sendBtn.disabled = true;
+    infoBoxes.classList.remove('hidden'); setTimeout(() => { smsBubble.classList.add('show'); }, 500);
+  }
+  function closeSMS() { document.getElementById('smsBubble').classList.remove('show'); }
+  function useOTP() { document.getElementById('otpInput').value = generatedOTP; closeSMS(); triggerVerification(); }
+  function triggerVerification() {
+    const overlay = document.getElementById('verificationPopup'); overlay.classList.add('show');
+    setTimeout(() => { overlay.classList.remove('show'); window.location.href = 'dashboard.html'; }, 2500);
+  }
+  function handleImageError(img) { img.onerror = null; img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>'; }
+</script>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</html>

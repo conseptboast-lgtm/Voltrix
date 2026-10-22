@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasks - VOLTRIX</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background-color: #F8F9FA; color: #111827; overflow-x: hidden; min-height: 100vh; padding: 15px 15px 90px 15px; display: flex; justify-content: center; }
+  .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2563EB; cursor: pointer; }
+  .header-title { font-size: 16px; font-weight: 800; color: #2563EB; }
+  .task-user-card { display: flex; align-items: center; gap: 14px; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 18px; padding: 16px; margin-bottom: 10px; }
+  .task-user-avatar { width: 56px; height: 56px; border-radius: 50%; background: #2563EB; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; overflow: hidden; flex-shrink: 0; }
+  .task-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .task-user-info { flex: 1; min-width: 0; }
+  .task-user-name { font-size: 16px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+  .task-user-stats { display: flex; gap: 20px; }
+  .task-user-stat { display: flex; flex-direction: column; gap: 2px; }
+  .tus-label { font-size: 10px; font-weight: 800; color: #9CA3AF; text-transform: uppercase; }
+  .tus-value { font-size: 13px; font-weight: 800; color: #2563EB; }
+  .task-phone-wrap { display: flex; justify-content: center; margin: 10px 0 22px; }
+  .task-phone { position: relative; width: 210px; background: linear-gradient(145deg, #1F2937, #111827); border-radius: 34px; padding: 22px 14px 18px; box-shadow: 0 24px 50px rgba(0,0,0,0.35); transition: transform .15s; }
+  .task-phone.pulse { animation: phonePulse .35s ease; }
+  @keyframes phonePulse { 0%,100% { transform: scale(1); } 40% { transform: scale(1.04); } 70% { transform: scale(0.98); } }
+  .task-phone-notch { width: 56px; height: 6px; border-radius: 3px; background: #000; margin: 0 auto 14px; }
+  .task-phone-screen { background: linear-gradient(160deg, #111827, #0F172A); border-radius: 20px; padding: 20px 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; min-height: 150px; }
+  .task-battery-ring { position: relative; width: 120px; height: 120px; }
+  .task-battery-svg { width: 100%; height: 100%; }
+  .task-battery-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .task-battery-percent { font-size: 26px; font-weight: 900; color: #60A5FA; }
+  .task-battery-label { font-size: 8px; font-weight: 800; color: #9CA3AF; letter-spacing: 1.2px; text-transform: uppercase; }
+  .task-phone-keypad { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px 12px; padding: 0 20px; opacity: .4; }
+  .task-phone-keypad span { text-align: center; font-size: 11px; color: #ffffff; font-weight: 800; }
+  .task-bar-wrap { margin-bottom: 22px; }
+  .task-bar { height: 10px; background: #E5E7EB; border-radius: 5px; overflow: hidden; margin-bottom: 8px; }
+  .task-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #60A5FA, #2563EB); border-radius: 5px; transition: width .25s ease; }
+  .task-bar-text { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 800; color: #9CA3AF; }
+  .task-bar-reward { color: #2563EB; }
+  .task-charge-btn { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 20px; background: #2563EB; border: none; border-radius: 20px; color: #ffffff; box-shadow: 0 14px 36px rgba(37,99,235,.4); cursor: pointer; }
+  .task-charge-btn:active { transform: scale(.97); }
+  .task-charge-btn:disabled { opacity: .6; cursor: not-allowed; }
+  .task-charge-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,.25); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .task-charge-label { font-size: 16px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+  .task-charge-hint { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.85); }
+  .task-status-box { display: flex; align-items: center; gap: 14px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 16px; padding: 16px; margin-bottom: 20px; }
+  .tsb-icon { font-size: 28px; flex-shrink: 0; }
+  .tsb-info { flex: 1; min-width: 0; }
+  .tsb-title { font-size: 14px; font-weight: 800; color: #16A34A; margin-bottom: 3px; }
+  .tsb-sub { font-size: 11.5px; font-weight: 600; color: #166534; line-height: 1.4; }
+  .popup-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 200; }
+  .popup-card { max-width: 340px; background: #FFFFFF; border-radius: 24px; padding: 28px; width: 100%; text-align: center; }
+  .reward-icon { font-size: 56px; margin-bottom: 10px; }
+  .reward-title { font-size: 20px; font-weight: 800; color: #2563EB; margin-bottom: 8px; }
+  .reward-amount { font-size: 36px; font-weight: 900; color: #16A34A; margin-bottom: 6px; }
+  .reward-sub { font-size: 12px; color: #6B7280; font-weight: 600; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+    <div class="header-title">Cash Charge</div>
+    <div style="width:40px"></div>
+  </div>
+  <div class="task-user-card">
+    <div class="task-user-avatar" id="taskAvatar">V</div>
+    <div class="task-user-info">
+      <div class="task-user-name" id="taskName">User</div>
+      <div class="task-user-stats">
+        <div class="task-user-stat"><span class="tus-label">Balance</span><span class="tus-value" id="taskBalance">₦0.00</span></div>
+        <div class="task-user-stat"><span class="tus-label">VIP</span><span class="tus-value" id="taskLevel">None</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="task-phone-wrap">
+    <div class="task-phone" id="taskPhone">
+      <div class="task-phone-notch"></div>
+      <div class="task-phone-screen">
+        <div class="task-battery-ring">
+          <svg viewBox="0 0 120 120" class="task-battery-svg">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#E5E7EB" stroke-width="8"/>
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#60A5FA" stroke-width="8" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" id="batteryProgress" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="task-battery-inner">
+            <div class="task-battery-percent" id="batteryPercent">0%</div>
+            <div class="task-battery-label">CHARGING</div>
+          </div>
+        </div>
+      </div>
+      <div class="task-phone-keypad"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+    </div>
+  </div>
+  <div class="task-bar-wrap">
+    <div class="task-bar"><div class="task-bar-fill" id="taskBarFill"></div></div>
+    <div class="task-bar-text"><span id="taskBarText">0 / 0 Tasks</span><span id="taskReward" class="task-bar-reward">Reward: ₦0</span></div>
+  </div>
+  <button class="task-charge-btn" id="chargeBtn" onclick="startCharge()" disabled>
+    <div class="task-charge-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="26" height="26"><path d="M9 2 L12 8 L15 2"/><rect x="9" y="8" width="6" height="4" rx="1"/><path d="M12 12 L12 17"/><rect x="8" y="17" width="8" height="5" rx="1.5" fill="currentColor"/></svg>
+    </div>
+    <span class="task-charge-label" id="chargeLabel">LOADING…</span>
+    <span class="task-charge-hint" id="chargeHint">Please wait</span>
+  </button>
+  <div class="task-status-box" id="statusBox" style="display:none;">
+    <div class="tsb-icon" id="statusIcon">✅</div>
+    <div class="tsb-info">
+      <div class="tsb-title" id="statusTitle">All tasks completed!</div>
+      <div class="tsb-sub" id="statusSub">Come back tomorrow to earn again</div>
+    </div>
+  </div>
+</div>
+
+<div id="rewardPopup" class="popup-overlay" style="display:none;">
+  <div class="popup-card">
+    <div class="reward-icon">🎉</div>
+    <div class="reward-title">Task Complete!</div>
+    <div class="reward-amount" id="rewardAmount">₦0</div>
+    <div class="reward-sub" id="rewardSub">Added to your balance</div>
+    <button class="task-charge-btn" onclick="closeReward()">Continue</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+var PLANS = [
+  { level: 'Slot 1',  price: 15000,  tasks: 5,  perTask: 100,     daily: 500      },
+  { level: 'Slot 2',  price: 36000,  tasks: 6,  perTask: 200,     daily: 1200     },
+  { level: 'Slot 3',  price: 77000,  tasks: 7,  perTask: 366.67,  daily: 2566.67  },
+  { level: 'Slot 4',  price: 134000, tasks: 8,  perTask: 558.33,  daily: 4466.67  },
+  { level: 'Slot 5',  price: 222000, tasks: 9,  perTask: 822.22,  daily: 7400     },
+  { level: 'Slot 6',  price: 450000, tasks: 10, perTask: 1500,    daily: 15000    },
+  { level: 'Slot 7',  price: 550000, tasks: 11, perTask: 1666.67, daily: 18333.33 },
+  { level: 'Slot 8',  price: 1100000,tasks: 12, perTask: 3055.56, daily: 36666.67 },
+  { level: 'Slot 9',  price: 2400000,tasks: 13, perTask: 6153.85, daily: 80000    },
+  { level: 'Slot 10', price: 3500000,tasks: 14, perTask: 7500,    daily: 105000   },
+  { level: 'Slot 11', price: 5000000,tasks: 15, perTask: 10000,   daily: 150000   }
+];
+var currentUser = null, currentPlan = null, tasksDone = 0, isCharging = false;
+function $(id){ return document.getElementById(id); }
+function f(n){ return '₦' + Number(n || 0).toLocaleString('en-NG', { maximumFractionDigits: 2 }); }
+
+function loadCurrentPlan() {
+  if (!currentUser || !currentUser.currentLevel) return null;
+  var found = PLANS.filter(function(p){ return p.level === currentUser.currentLevel; });
+  return found.length > 0 ? found[0] : null;
+}
+
+function paintUI() {
+  $('taskName').textContent = currentUser.fullName || 'User';
+  $('taskBalance').textContent = f(currentUser.balance);
+  $('taskLevel').textContent = currentUser.currentLevel || 'None';
+
+  var av = $('taskAvatar');
+  if (currentUser.facePhotoUrl) av.innerHTML = '<img src="' + currentUser.facePhotoUrl + '" alt="avatar">';
+  else av.textContent = (currentUser.firstName || 'V').charAt(0).toUpperCase();
+
+  if (!currentPlan) {
+    $('taskBarText').textContent = 'No plan active';
+    $('taskReward').textContent = 'Buy a VIP plan';
+    $('chargeBtn').disabled = true;
+    $('chargeLabel').textContent = 'NO PLAN';
+    $('chargeHint').textContent = 'Go to VIP page';
+    $('statusBox').style.display = 'flex';
+    $('statusIcon').textContent = '💎';
+    $('statusTitle').textContent = 'No Active Plan';
+    $('statusSub').textContent = 'Purchase a VIP plan to start earning.';
+    return;
+  }
+
+  var totalTasks = currentPlan.tasks;
+  var remaining = totalTasks - tasksDone;
+  var progressPercent = (tasksDone / totalTasks) * 100;
+
+  $('taskBarText').textContent = tasksDone + ' / ' + totalTasks + ' Tasks';
+  $('taskReward').textContent = 'Reward: ' + f(currentPlan.perTask) + ' per task';
+  $('batteryPercent').textContent = Math.round(progressPercent) + '%';
+  $('taskBarFill').style.width = progressPercent + '%';
+  var dashOffset = 327 - (327 * (progressPercent / 100));
+  $('batteryProgress').setAttribute('stroke-dashoffset', dashOffset);
+
+  if (tasksDone >= totalTasks) {
+    $('chargeBtn').disabled = true;
+    $('chargeLabel').textContent = 'ALL DONE';
+    $('chargeHint').textContent = 'Wait for admin to reset';
+    $('statusBox').style.display = 'flex';
+    $('statusIcon').textContent = '✅';
+    $('statusTitle').textContent = 'All tasks completed!';
+    $('statusSub').textContent = 'You earned ' + f(currentPlan.daily) + ' today. Wait for next reset.';
+  } else if (isCharging) {
+    $('chargeBtn').disabled = true;
+    $('chargeLabel').textContent = 'CHARGING...';
+    $('chargeHint').textContent = 'Please wait';
+  } else {
+    $('chargeBtn').disabled = false;
+    $('chargeLabel').textContent = 'START TASK ' + (tasksDone + 1);
+    $('chargeHint').textContent = remaining + ' task(s) remaining';
+    $('statusBox').style.display = 'none';
+  }
+}
+
+function startCharge() {
+  if (isCharging || !currentPlan) return;
+  if (tasksDone >= currentPlan.tasks) return;
+  
+  isCharging = true;
+  paintUI();
+  var p = 0;
+  var interval = setInterval(async function() {
+    p += 5;
+    $('batteryPercent').textContent = p + '%';
+    var phone = $('taskPhone');
+    phone.classList.remove('pulse');
+    void phone.offsetWidth;
+    phone.classList.add('pulse');
+    
+    if (p >= 100) {
+      clearInterval(interval);
+      isCharging = false;
+      await completeTask();
+    }
+  }, 100);
+}
+
+async function completeTask() {
+  var reward = Number(currentPlan.perTask) || 0;
+  try {
+    tasksDone++;
+    await dbUpdateUser(currentUser.userId, {
+      balance: (currentUser.balance || 0) + reward,
+      total_earned: (currentUser.totalEarned || 0) + reward,
+      total_profit: (currentUser.totalProfit || 0) + reward,
+      tasks_completed_today: tasksDone
+    });
+    currentUser = await dbGetUser(currentUser.userId);
+
+    $('rewardAmount').textContent = f(reward);
+    $('rewardSub').textContent = 'Task ' + tasksDone + ' of ' + currentPlan.tasks + ' complete';
+    $('rewardPopup').style.display = 'flex';
+    paintUI();
+  } catch (e) {
+    console.error(e);
+    alert('❌ ' + (e.message || 'Error'));
+  }
+}
+
+function closeReward() { $('rewardPopup').style.display = 'none'; }
+
+async function init() {
+  currentUser = await requireLogin();
+  if (!currentUser) return;
+  currentPlan = loadCurrentPlan();
+  tasksDone = Number(currentUser.tasksCompletedToday) || 0;
+  paintUI();
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</html>

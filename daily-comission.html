@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VOLTRIX - Daily Commission</title>
+  <style>
+    :root {
+      --light-blue: #3b82f6;
+      --black: #1a1a1a;
+      --white: #ffffff;
+      --bg-light: #f0f7ff;
+      --border: #e2e8f0;
+      --text-muted: #64748b;
+      --success: #16a34a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: var(--bg-light); color: var(--black); display: flex; justify-content: center; padding: 15px 15px 80px 15px; min-height: 100vh; }
+    
+    .app-container { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 15px; }
+
+    /* --- HEADER --- */
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .back-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--white); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .back-btn svg { width: 18px; height: 18px; stroke: var(--black); stroke-width: 2; fill: none; }
+    .header-logo { height: 24px; object-fit: contain; }
+
+    /* --- PAGE TITLE --- */
+    .page-title { text-align: center; font-size: 16px; font-weight: 900; color: var(--black); padding: 10px 0; text-transform: uppercase; }
+
+    /* --- STATS BOX --- */
+    .stats-box { background: var(--white); border-radius: 20px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.08); display: flex; flex-direction: column; gap: 12px; }
+    .stat-row { display: flex; justify-content: space-between; align-items: center; }
+    .stat-label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .stat-value { font-size: 16px; font-weight: 900; color: var(--black); }
+    .stat-value span { color: var(--light-blue); }
+
+    /* --- TABLE --- */
+    .table-container { background: var(--white); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 8px 25px rgba(59, 130, 246, 0.08); }
+    .table-header { display: grid; grid-template-columns: 1.5fr 1fr 1fr; background: var(--bg-light); padding: 12px 15px; border-bottom: 1px solid var(--border); }
+    .table-header span { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; text-align: center; }
+    .table-header span:first-child { text-align: left; }
+    
+    .table-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr; padding: 14px 15px; border-bottom: 1px solid var(--border); align-items: center; }
+    .table-row:last-child { border-bottom: none; }
+    .table-row span { font-size: 12px; font-weight: 700; text-align: center; }
+    .table-row span:first-child { text-align: left; color: var(--black); }
+    .table-row span:nth-child(2) { color: var(--black); }
+    .table-row span:last-child { color: var(--success); font-weight: 900; }
+
+    /* --- BOTTOM NAVIGATION --- */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; width: 100%;
+      background: var(--white); border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 10px 0 15px 0; z-index: 100;
+      max-width: 420px; left: 50%; transform: translateX(-50%);
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+      border-radius: 20px 20px 0 0;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 60px; }
+    .nav-icon { width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; }
+    .nav-icon svg { width: 22px; height: 22px; stroke: var(--text-muted); stroke-width: 2; fill: none; transition: 0.2s; }
+    .nav-label { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; transition: 0.2s; }
+    
+    .nav-item.active .nav-icon svg { stroke: var(--light-blue); }
+    .nav-item.active .nav-label { color: var(--light-blue); }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="window.location.href='profile.html'">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <img src="voltrix-logo.png" alt="VOLTRIX" class="header-logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%233b82f6\'><path d=\'M13 2L3 14h9l-1 8 10-12h-9l1-8z\'/></svg>';">
+    </div>
+    <div style="width: 36px;"></div> <!-- Spacer for alignment -->
+  </header>
+
+  <!-- PAGE TITLE -->
+  <div class="page-title">Daily - Rebate</div>
+
+  <!-- STATS BOX -->
+  <div class="stats-box">
+    <div class="stat-row">
+      <span class="stat-label">Bal</span>
+      <span class="stat-value"><span>₦</span>0.00</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Users</span>
+      <span class="stat-value">0</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Today Commission</span>
+      <span class="stat-value"><span>₦</span>0.00</span>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-container">
+    <div class="table-header">
+      <span>Referrals</span>
+      <span>Referral Bonus</span>
+      <span>Daily Commission</span>
+    </div>
+    
+    <!-- Dummy Data Rows -->
+    <div class="table-row">
+      <span>Name</span>
+      <span>₦0.00</span>
+      <span>₦0.00</span>
+    </div>
+    <div class="table-row">
+      <span>Name</span>
+      <span>₦0.00</span>
+      <span>₦0.00</span>
+    </div>
+    <div class="table-row">
+      <span>Name</span>
+      <span>₦0.00</span>
+      <span>₦0.00</span>
+    </div>
+    <div class="table-row">
+      <span>Name</span>
+      <span>₦0.00</span>
+      <span>₦0.00</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='dashboard.html'">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+    <span class="nav-label">Home</span>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+    <span class="nav-label">Team</span>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <span class="nav-label">VIP</span>
+  </div>
+  <div class="nav-item">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+    <span class="nav-label">Tasks</span>
+  </div>
+  <div class="nav-item active" onclick="window.location.href='profile.html'">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <span class="nav-label">Profile</span>
+  </div>
+</nav>
+
+<script>
+  // You can add Supabase logic here to fetch the user's referral data and update the table
+  document.addEventListener('DOMContentLoaded', async function() {
+    var currentUser = await requireLogin();
+    if (currentUser) {
+      // Example: document.querySelector('.stat-value').innerHTML = '₦' + currentUser.balance;
+    }
+  });
+</script>
+
+</body>
+</html>

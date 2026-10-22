@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Invite Friends - VOLTRIX</title>
+<style>
+  :root { --primary: #2563EB; --primary-dark: #1E40AF; --black: #111827; --gray: #6B7280; --gray-light: #F9FAFB; --border: #E5E7EB; --white: #FFFFFF; --whatsapp: #25D366; --telegram: #0088cc; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background-color: var(--gray-light); color: var(--black); min-height: 100vh; display: flex; justify-content: center; padding: 15px 15px 40px 15px; }
+  .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* --- HEADER --- */
+  .header { display: flex; align-items: center; justify-content: space-between; }
+  .back-btn { width: 40px; height: 40px; border-radius: 12px; background: var(--white); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--primary); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+  .header-title { font-size: 18px; font-weight: 800; color: var(--black); }
+
+  /* --- HERO CARD --- */
+  .hero { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); border-radius: 24px; padding: 30px 20px; text-align: center; color: var(--white); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3); }
+  .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%); animation: rotate 15s linear infinite; }
+  @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .hero-icon { font-size: 48px; margin-bottom: 12px; position: relative; z-index: 2; }
+  .hero-title { font-size: 22px; font-weight: 900; margin-bottom: 6px; position: relative; z-index: 2; }
+  .hero-sub { font-size: 13px; font-weight: 500; opacity: 0.9; position: relative; z-index: 2; }
+
+  /* --- REFERRAL CODE BOX --- */
+  .code-box { background: var(--white); border: 2px dashed var(--primary); border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.04); margin-top: 10px; }
+  .code-label { font-size: 12px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .code-value { font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 2px; margin-bottom: 16px; }
+  .code-link { font-size: 11px; font-weight: 600; color: var(--gray); background: var(--gray-light); padding: 8px 12px; border-radius: 8px; word-break: break-all; margin-bottom: 20px; display: block; }
+  .btn-copy { width: 100%; padding: 16px; background: var(--primary); color: var(--white); border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 14px rgba(37,99,235,0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-copy:active { transform: scale(0.98); background: var(--primary-dark); }
+
+  /* --- SHARE BUTTONS --- */
+  .share-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 10px; }
+  .share-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 10px; background: var(--white); border: 1px solid var(--border); border-radius: 16px; cursor: pointer; transition: 0.2s; text-decoration: none; color: var(--black); }
+  .share-btn:active { transform: scale(0.95); background: var(--gray-light); }
+  .share-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .share-icon svg { width: 24px; height: 24px; }
+  .share-btn span { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; }
+  .icon-wa { background: #E8F9EE; }
+  .icon-tg { background: #E0F2FE; }
+  .icon-native { background: #F3F4F6; }
+
+  /* --- HOW IT WORKS --- */
+  .card { background: var(--white); border-radius: 20px; padding: 20px; border: 1px solid var(--border); }
+  .card-title { font-size: 16px; font-weight: 800; color: var(--black); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .step { display: flex; gap: 12px; margin-bottom: 16px; }
+  .step:last-child { margin-bottom: 0; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: #EFF6FF; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+  .step-text { font-size: 13px; color: var(--gray); line-height: 1.5; font-weight: 500; }
+  .step-text b { color: var(--black); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="app-container">
+  
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+    <div class="header-title">Invite & Earn</div>
+    <div style="width:40px"></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">🎁</div>
+    <div class="hero-title">Invite Your Friends</div>
+    <div class="hero-sub">Earn exciting bonuses for every active friend you bring to VOLTRIX.</div>
+  </div>
+
+  <div class="code-box">
+    <div class="code-label">Your Referral Code</div>
+    <div class="code-value" id="refCodeDisplay">------</div>
+    
+    <div class="code-link" id="shareLinkDisplay">Generating link...</div>
+    
+    <button class="btn-copy" onclick="copyReferralLink()">
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Invite Link
+    </button>
+  </div>
+
+  <div class="share-grid">
+    <a href="#" id="btnWhatsapp" class="share-btn" target="_blank">
+      <div class="share-icon icon-wa"><svg viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29z"/></svg></div>
+      <span>WhatsApp</span>
+    </a>
+    <a href="#" id="btnTelegram" class="share-btn" target="_blank">
+      <div class="share-icon icon-tg"><svg viewBox="0 0 24 24" fill="#0088cc"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.46-.42-1.4-.88.03-.24.36-.48.99-.74 3.88-1.69 6.47-2.8 7.77-3.34 3.69-1.54 4.46-1.81 4.96-1.82.11 0 .36.03.52.15.13.1.17.24.18.33.01.09.02.28.01.37z"/></svg></div>
+      <span>Telegram</span>
+    </a>
+    <button onclick="nativeShare()" class="share-btn" style="border: 1px solid var(--border);">
+      <div class="share-icon icon-native"><svg viewBox="0 0 24 24" stroke="#111827" stroke-width="2" fill="none"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      <span>More</span>
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💡 How It Works</div>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">Share your link with friends via WhatsApp, Telegram, or any social media.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">Your friend clicks the link and <b>registers an account</b>. Your code is automatically applied.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">Once they activate their account or buy a VIP plan, the admin will manually credit your <b>referral bonus</b> to your wallet balance.</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+  var currentUser = null;
+  var referralLink = "";
+
+  function $(id){ return document.getElementById(id); }
+
+  async function init() {
+    currentUser = await requireLogin();
+    if (!currentUser) return;
+
+    if (!currentUser.referralCode) {
+      $('refCodeDisplay').textContent = "NO CODE";
+      $('shareLinkDisplay').textContent = "Please contact support.";
+      return;
+    }
+
+    // 1. Display the code
+    $('refCodeDisplay').textContent = currentUser.referralCode;
+
+    // 2. Generate the link (e.g., https://yourdomain.com/register.html?ref=CODE)
+    // We use window.location.origin to get the base URL dynamically
+    var baseUrl = window.location.origin + window.location.pathname.replace('share.html', 'register.html');
+    referralLink = baseUrl + "?ref=" + currentUser.referralCode;
+
+    // 3. Update UI text
+    $('shareLinkDisplay').textContent = referralLink;
+
+    // 4. Setup the share buttons
+    var shareText = encodeURIComponent("Join me on VOLTRIX and start earning daily! Use my link to register:");
+    var encodedLink = encodeURIComponent(referralLink);
+
+    $('btnWhatsapp').href = "https://wa.me/?text=" + shareText + "%0A%0A" + encodedLink;
+    $('btnTelegram').href = "https://t.me/share/url?url=" + encodedLink + "&text=" + shareText;
+  }
+
+  function copyReferralLink() {
+    if (!referralLink) return alert("Referral link not ready yet.");
+    
+    navigator.clipboard.writeText(referralLink).then(function() {
+      alert("✅ Invite link copied! Send it to your friends.");
+    }).catch(function() {
+      // Fallback for older browsers
+      var tempInput = document.createElement("input");
+      tempInput.value = referralLink;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      alert("✅ Invite link copied!");
+    });
+  }
+
+  function nativeShare() {
+    if (!referralLink) return alert("Link not ready.");
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'Join VOLTRIX',
+        text: 'Start earning daily on VOLTRIX. Register with my referral link:',
+        url: referralLink
+      }).catch(console.error);
+    } else {
+      alert("Your browser does not support native sharing. Please use the Copy button.");
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>G-Vest Investment - VOLTRIX</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { background-color: #F9FAFB; color: #111827; padding: 15px 15px 80px 15px; min-height: 100vh; display: flex; justify-content: center; }
+  .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+  
+  .header { display: flex; align-items: center; justify-content: space-between; }
+  .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2563EB; cursor: pointer; }
+  .header-title { font-size: 18px; font-weight: 800; color: #111827; }
+
+  .tabs { display: flex; background: #FFFFFF; border-radius: 12px; padding: 4px; border: 1px solid #E5E7EB; }
+  .tab { flex: 1; text-align: center; padding: 10px; font-size: 12px; font-weight: 800; color: #6B7280; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+  .tab.active { background: #2563EB; color: #FFFFFF; }
+
+  .vest-card { background: #FFFFFF; border-radius: 20px; padding: 20px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin-bottom: 16px; }
+  .vest-powered { font-size: 10px; font-weight: 700; color: #6B7280; text-transform: uppercase; background: #F9FAFB; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-bottom: 12px; }
+  .vest-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .vest-brand { font-size: 20px; font-weight: 900; color: #111827; }
+  .vest-duration { font-size: 11px; font-weight: 800; color: #FFFFFF; background: #111827; padding: 4px 10px; border-radius: 20px; }
+  .vest-details { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #E5E7EB; padding-top: 16px; margin-bottom: 16px; }
+  .vest-price { font-size: 12px; color: #6B7280; font-weight: 700; }
+  .vest-price span { display: block; font-size: 15px; color: #111827; font-weight: 900; margin-top: 2px; }
+  .vest-percent { font-size: 20px; font-weight: 900; color: #16A34A; }
+  
+  .btn-invest { width: 100%; padding: 14px; background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+  .btn-invest:active { background: #2563EB; color: #FFFFFF; }
+</style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+    <div class="header-title">G-Vest</div>
+    <div style="width:40px"></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active">Android-Vest</div>
+    <div class="tab">iOS-Vest</div>
+  </div>
+
+  <div class="vest-card">
+    <div class="vest-powered">Powered by Voltrix</div>
+    <div class="vest-header">
+      <div class="vest-brand">Tecno</div>
+      <div class="vest-duration">4 Days</div>
+    </div>
+    <div class="vest-details">
+      <div class="vest-price">Price Range <span>₦1,000 - ₦10,000</span></div>
+      <div class="vest-percent">30%</div>
+    </div>
+    <button class="btn-invest" onclick="alert('Coming soon!')">Invest in Tecno</button>
+  </div>
+
+  <div class="vest-card">
+    <div class="vest-powered">Powered by Voltrix</div>
+    <div class="vest-header">
+      <div class="vest-brand">OPPO</div>
+      <div class="vest-duration">30 Days</div>
+    </div>
+    <div class="vest-details">
+      <div class="vest-price">Price Range <span>₦10,000 - ₦100,000</span></div>
+      <div class="vest-percent">30%</div>
+    </div>
+    <button class="btn-invest" onclick="alert('Coming soon!')">Invest in OPPO</button>
+  </div>
+
+  <div class="vest-card">
+    <div class="vest-powered">Powered by Voltrix</div>
+    <div class="vest-header">
+      <div class="vest-brand">Infinix</div>
+      <div class="vest-duration">14 Days</div>
+    </div>
+    <div class="vest-details">
+      <div class="vest-price">Price Range <span>₦5,000 - ₦50,000</span></div>
+      <div class="vest-percent">25%</div>
+    </div>
+    <button class="btn-invest" onclick="alert('Coming soon!')">Invest in Infinix</button>
+  </div>
+</div>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</html>

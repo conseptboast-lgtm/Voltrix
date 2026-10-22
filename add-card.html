@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Add Card - VOLTRIX</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background-color: #F9FAFB; color: #111827; padding: 15px 15px 80px 15px; min-height: 100vh; display: flex; justify-content: center; }
+  .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+  
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; margin-bottom: 10px; }
+  .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2563EB; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+  .back-btn:active { transform: scale(0.95); background: #EFF6FF; }
+  .header-title { font-size: 18px; font-weight: 800; color: #111827; }
+  .binded-btn { font-size: 12px; font-weight: 800; color: #2563EB; background: #EFF6FF; padding: 8px 14px; border-radius: 10px; border: 1px solid #BFDBFE; cursor: pointer; }
+  .binded-btn:active { background: #DBEAFE; transform: scale(0.95); }
+
+  .input-group { margin-bottom: 16px; }
+  .input-group label { display: block; font-size: 11px; font-weight: 800; color: #2563EB; letter-spacing: 0.8px; margin-bottom: 7px; text-transform: uppercase; }
+  .input-wrap { position: relative; display: flex; align-items: center; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; transition: 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+  .input-wrap:focus-within { border-color: #2563EB; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+  .input-wrap input, .input-wrap select { width: 100%; padding: 15px 16px; border: none; background: transparent; font-size: 14px; font-weight: 600; color: #111827; outline: none; border-radius: 12px; appearance: none; -webkit-appearance: none; }
+  .input-wrap input::placeholder { color: #9CA3AF; font-weight: 500; }
+  .input-wrap select { cursor: pointer; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 16px center; background-size: 12px; }
+
+  .note-box { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+  .note-box p { color: #92400E; font-size: 12px; font-weight: 600; line-height: 1.5; margin: 0; }
+
+  .btn-process { width: 100%; padding: 16px; background: #2563EB; color: #FFFFFF; font-size: 15px; font-weight: 800; border-radius: 14px; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-process:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3); }
+  .btn-process:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .loading-state { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 30px 0; }
+  .loading-spinner { width: 40px; height: 40px; border: 4px solid #E5E7EB; border-top: 4px solid #2563EB; border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; font-weight: 800; color: #2563EB; }
+
+  /* --- GOLDEN CARD PREVIEW --- */
+  .card-preview { display: none; background: linear-gradient(135deg, #F5C542, #D4AF37, #B8860B); border-radius: 20px; padding: 22px; color: #FFFFFF; box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4); margin-top: 20px; position: relative; overflow: hidden; border: 2px solid rgba(255,255,255,0.3); }
+  .card-preview::before { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 70%); border-radius: 50%; }
+  .card-preview::after { content: 'VOLTRIX'; position: absolute; bottom: -10px; right: 10px; font-size: 40px; font-weight: 900; color: rgba(255,255,255,0.1); letter-spacing: 2px; }
+  .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; position: relative; z-index: 2; }
+  .card-brand { font-size: 11px; font-weight: 900; letter-spacing: 1.5px; color: #FFFFFF; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .card-chip-img { width: 42px; height: 32px; border-radius: 6px; object-fit: contain; background: #FFFFFF; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: block; }
+  .card-bank-name { font-size: 16px; font-weight: 900; margin-bottom: 20px; position: relative; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .card-number-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative; z-index: 2; }
+  .card-number { font-size: 18px; font-weight: 700; letter-spacing: 3px; font-family: monospace; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .eye-toggle { font-size: 18px; cursor: pointer; opacity: 0.8; }
+  .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 2; }
+  .card-owner-name { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.95); text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .visa-logo { font-size: 18px; font-weight: 900; font-style: italic; color: #FFFFFF; letter-spacing: -1px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
+  /* --- MODAL --- */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 200; }
+  .modal-card { background: #FFFFFF; border-radius: 24px; padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .modal-title { font-size: 16px; font-weight: 800; color: #111827; }
+  .modal-close { width: 32px; height: 32px; border-radius: 50%; background: #F3F4F6; color: #6B7280; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .modal-close:active { background: #E5E7EB; color: #DC2626; }
+
+  .msg { display: none; align-items: center; justify-content: center; text-align: center; font-size: 12.5px; margin-top: 14px; font-weight: 700; padding: 12px 14px; border-radius: 12px; width: 100%; margin-bottom: 20px; }
+  .msg.show { display: flex; }
+  .msg.error { background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; }
+  .msg.success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #16A34A; }
+</style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='withdraw.html'">←</button>
+    <div class="header-title">Add Card</div>
+    <button class="binded-btn" onclick="openBindedCard()">Binded Cards</button>
+  </div>
+
+  <div class="input-group">
+    <label>Choose Your Bank</label>
+    <div class="input-wrap">
+      <select id="bankName">
+        <option value="">-- Select Bank --</option>
+        <option value="Access Bank">Access Bank</option>
+        <option value="Citibank Nigeria">Citibank Nigeria</option>
+        <option value="Ecobank Nigeria">Ecobank Nigeria</option>
+        <option value="Fidelity Bank">Fidelity Bank</option>
+        <option value="First Bank of Nigeria">First Bank of Nigeria</option>
+        <option value="First City Monument Bank (FCMB)">First City Monument Bank (FCMB)</option>
+        <option value="Globus Bank">Globus Bank</option>
+        <option value="Guaranty Trust Bank (GTBank)">Guaranty Trust Bank (GTBank)</option>
+        <option value="Heritage Bank">Heritage Bank</option>
+        <option value="Jaiz Bank">Jaiz Bank</option>
+        <option value="Keystone Bank">Keystone Bank</option>
+        <option value="Lotus Bank">Lotus Bank</option>
+        <option value="Optimus Bank">Optimus Bank</option>
+        <option value="Parallex Bank">Parallex Bank</option>
+        <option value="Polaris Bank">Polaris Bank</option>
+        <option value="Premium Trust Bank">Premium Trust Bank</option>
+        <option value="Providus Bank">Providus Bank</option>
+        <option value="Signature Bank">Signature Bank</option>
+        <option value="Stanbic IBTC Bank">Stanbic IBTC Bank</option>
+        <option value="Standard Chartered Bank">Standard Chartered Bank</option>
+        <option value="Sterling Bank">Sterling Bank</option>
+        <option value="SunTrust Bank">SunTrust Bank</option>
+        <option value="TAJ Bank">TAJ Bank</option>
+        <option value="The Alternative Bank">The Alternative Bank</option>
+        <option value="Titan Trust Bank">Titan Trust Bank</option>
+        <option value="Union Bank of Nigeria">Union Bank of Nigeria</option>
+        <option value="United Bank for Africa (UBA)">United Bank for Africa (UBA)</option>
+        <option value="Unity Bank">Unity Bank</option>
+        <option value="Wema Bank">Wema Bank</option>
+        <option value="Zenith Bank">Zenith Bank</option>
+        <option value="Opay">Opay</option>
+        <option value="PalmPay">PalmPay</option>
+        <option value="Moniepoint">Moniepoint</option>
+        <option value="Kuda">Kuda</option>
+        <option value="VBank">VBank</option>
+        <option value="ALAT by Wema">ALAT by Wema</option>
+        <option value="Carbon">Carbon</option>
+        <option value="FairMoney">FairMoney</option>
+        <option value="Paga">Paga</option>
+        <option value="Sparkle">Sparkle</option>
+        <option value="Rubies">Rubies</option>
+        <option value="Eyowo">Eyowo</option>
+        <option value="GoMoney">GoMoney</option>
+        <option value="PiggyVest (PocketApp)">PiggyVest (PocketApp)</option>
+        <option value="LAPO Microfinance Bank">LAPO Microfinance Bank</option>
+        <option value="Accion Microfinance Bank">Accion Microfinance Bank</option>
+        <option value="AB Microfinance Bank">AB Microfinance Bank</option>
+        <option value="NPF Microfinance Bank">NPF Microfinance Bank</option>
+        <option value="Parallex Microfinance Bank">Parallex Microfinance Bank</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label>Enter Account Number</label>
+    <div class="input-wrap">
+      <input type="text" id="accountNumber" placeholder="10-digit account number" inputmode="numeric" maxlength="10" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label>Enter Owner Name</label>
+    <div class="input-wrap">
+      <input type="text" id="ownerName" placeholder="Name on the account" autocomplete="off">
+    </div>
+  </div>
+
+  <div class="note-box">
+    <p><b>Note:</b> The bank details must be correct to avoid errors during withdrawals. Double-check your information before generating the card.</p>
+  </div>
+
+  <button class="btn-process" id="generateBtn" onclick="generateCard()">⚡ Generate Card</button>
+
+  <div class="loading-state" id="loadingState">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Generating your card...</div>
+  </div>
+
+  <div class="card-preview" id="cardPreview">
+    <div class="card-top">
+      <div class="card-brand">POWERED BY VOLTRIX</div>
+      <img src="voltrix-icon.png" id="cardBankLogo" class="card-chip-img" alt="Bank Logo">
+    </div>
+    <div class="card-bank-name" id="previewBank">Bank Name</div>
+    <div class="card-number-row">
+      <div class="card-number" id="previewNumber">**** **** ****</div>
+      <span class="eye-toggle" onclick="toggleCardNumber()">👁️</span>
+    </div>
+    <div class="card-bottom">
+      <div class="card-owner-name" id="previewOwner">OWNER NAME</div>
+      <div class="visa-logo">VOLTRIX</div>
+    </div>
+  </div>
+
+  <p id="msg" class="msg"></p>
+</div>
+
+<div id="bindedModal" class="modal-overlay" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">💳 Binded Cards</div>
+      <button class="modal-close" onclick="closeBindedCard()">✕</button>
+    </div>
+    <div id="bindedCardContent"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+var currentUser = null;
+var isNumberVisible = false;
+var generatedData = null;
+
+function $(id){ return document.getElementById(id); }
+function go(url){ window.location.href = url; }
+function showMsg(t, type){ 
+  var m = $('msg'); 
+  m.textContent = t; 
+  m.className = 'msg show ' + (type || 'error'); 
+  setTimeout(function(){ m.className = 'msg'; }, 5000);
+}
+
+function getBankLogoUrl(bankName) {
+  if (!bankName) return 'voltrix-icon.png';
+  var name = bankName.toLowerCase();
+  if (name.includes('opay')) return 'opay-logo.png';
+  if (name.includes('palmpay')) return 'palmpay-logo.png';
+  if (name.includes('moniepoint')) return 'moniepoint-logo.png';
+  if (name.includes('alat')) return 'alat-logo.png';
+  if (name.includes('fcmb') || name.includes('first city monument')) return 'fcmb-logo.png';
+  if (name.includes('fidelity')) return 'fidelity-logo.png';
+  if (name.includes('zenith')) return 'zenith-logo.png';
+  if (name.includes('gtbank') || name.includes('gtco') || name.includes('guaranty trust')) return 'gtco-logo.png';
+  if (name.includes('uba') || name.includes('united bank for africa')) return 'uba-logo.png';
+  if (name.includes('union bank')) return 'union-logo.png';
+  if (name.includes('first bank')) return 'firstbank-logo.png';
+  if (name.includes('sterling')) return 'sterling-logo.png';
+  return 'voltrix-icon.png'; 
+}
+
+function updateBankLogo() {
+  var bank = $('bankName').value;
+  $('cardBankLogo').src = getBankLogoUrl(bank);
+}
+
+async function init(){
+  currentUser = await requireLogin(); 
+  if (!currentUser) return;
+  $('bankName').value = currentUser.bankName || '';
+  $('accountNumber').value = currentUser.bankAccount || '';
+  $('ownerName').value = currentUser.bankHolder || '';
+  $('accountNumber').addEventListener('input', function(){ 
+    var cleaned = this.value.replace(/[^0-9]/g, ''); 
+    if (cleaned !== this.value) this.value = cleaned; 
+  });
+  $('bankName').addEventListener('change', updateBankLogo);
+  if (currentUser.bankAccount && currentUser.bankName && currentUser.bankHolder) {
+    generatedData = { bank: currentUser.bankName, number: currentUser.bankAccount, owner: currentUser.bankHolder };
+    $('previewBank').textContent = generatedData.bank;
+    $('previewNumber').textContent = '**** **** ' + generatedData.number.slice(-4);
+    $('previewOwner').textContent = generatedData.owner.toUpperCase();
+    updateBankLogo();
+    $('cardPreview').style.display = 'block';
+  }
+}
+
+function toggleCardNumber() {
+  isNumberVisible = !isNumberVisible;
+  var numEl = $('previewNumber');
+  if (!generatedData) return;
+  if (isNumberVisible) { numEl.textContent = generatedData.number; } 
+  else { numEl.textContent = '**** **** ' + generatedData.number.slice(-4); }
+}
+
+async function generateCard() {
+  var bn = $('bankName').value;
+  var an = $('accountNumber').value.trim();
+  var nm = $('ownerName').value.trim();
+  var btn = $('generateBtn');
+  var loading = $('loadingState');
+  var cardPreview = $('cardPreview');
+
+  if (!bn) return showMsg('❌ Please select your bank', 'error');
+  if (!an || an.length !== 10) return showMsg('❌ Account number must be 10 digits', 'error');
+  if (!nm) return showMsg('❌ Please enter the owner name', 'error');
+  if (!currentUser) return showMsg('❌ Session expired', 'error');
+
+  btn.style.display = 'none';
+  loading.style.display = 'flex';
+  cardPreview.style.display = 'none';
+
+  setTimeout(async function() {
+    try {
+      await dbUpdateUser(currentUser.userId, { bank_name: bn, bank_account: an, bank_holder: nm });
+      generatedData = { bank: bn, number: an, owner: nm };
+      $('previewBank').textContent = bn;
+      $('previewNumber').textContent = '**** **** ' + an.slice(-4);
+      $('previewOwner').textContent = nm.toUpperCase();
+      updateBankLogo();
+      loading.style.display = 'none';
+      cardPreview.style.display = 'block';
+      showMsg('✅ Card generated and saved successfully!', 'success');
+      setTimeout(function() { go('withdraw.html'); }, 3000);
+    } catch (e) {
+      console.error(e);
+      loading.style.display = 'none';
+      btn.style.display = 'flex';
+      showMsg('❌ ' + (e.message || 'Could not generate card'), 'error');
+    }
+  }, 2000);
+}
+
+async function openBindedCard() {
+  if (!currentUser) {
+    currentUser = await getCurrentUser();
+    if (!currentUser) return alert('Session expired');
+  }
+  var modal = $('bindedModal');
+  var content = $('bindedCardContent');
+  if (!currentUser.bankAccount) {
+    content.innerHTML = '<p style="text-align:center;color:#999;font-size:13px;font-weight:700;padding:20px 0;">No card binded yet.</p>';
+    modal.style.display = 'flex';
+    return;
+  }
+  content.innerHTML = 
+    '<div class="card-preview" style="display:block; margin-top:0; box-shadow:0 10px 25px rgba(212, 175, 55, 0.3);">' +
+      '<div class="card-top"><div class="card-brand">POWERED BY VOLTRIX</div><img src="' + getBankLogoUrl(currentUser.bankName) + '" class="card-chip-img" alt="Bank Logo"></div>' +
+      '<div class="card-bank-name">' + currentUser.bankName + '</div>' +
+      '<div class="card-number-row"><div class="card-number">**** **** ' + currentUser.bankAccount.slice(-4) + '</div></div>' +
+      '<div class="card-bottom"><div class="card-owner-name">' + currentUser.bankHolder.toUpperCase() + '</div><div class="visa-logo">VOLTRIX</div></div>' +
+    '</div>';
+  modal.style.display = 'flex';
+}
+
+function closeBindedCard() { $('bindedModal').style.display = 'none'; }
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</html>

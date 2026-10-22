@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - VOLTRIX</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { background-color: #F8F9FA; color: #111827; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .login-container { width: 100%; max-width: 400px; background: #FFFFFF; border-radius: 24px; padding: 32px 24px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); border: 1px solid #E5E7EB; }
+  .header { text-align: center; margin-bottom: 30px; }
+  .logo { height: 40px; object-fit: contain; margin-bottom: 10px; }
+  .title { font-size: 22px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+  .subtitle { font-size: 14px; color: #6B7280; font-weight: 500; }
+  .input-group { margin-bottom: 18px; }
+  .input-group label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px; text-transform: uppercase; }
+  .input-group input { width: 100%; padding: 14px 16px; background: #F9FAFB; border: 1.5px solid #E5E7EB; border-radius: 12px; font-size: 15px; font-weight: 600; color: #111827; outline: none; transition: 0.2s; }
+  .input-group input:focus { border-color: #2563EB; background: #FFFFFF; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+  .btn-login { width: 100%; padding: 16px; background: #2563EB; color: #FFFFFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); transition: 0.2s; }
+  .btn-login:active { transform: scale(0.98); }
+  .btn-login:disabled { background: #9CA3AF; cursor: not-allowed; transform: none; }
+  .msg { display: none; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; text-align: center; margin-top: 16px; }
+  .msg.error { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; display: block; }
+  .msg.success { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; display: block; }
+  .footer-text { text-align: center; font-size: 13px; color: #6B7280; font-weight: 500; margin-top: 24px; }
+  .footer-text a { color: #2563EB; font-weight: 700; text-decoration: none; margin-left: 4px; }
+</style>
+</head>
+<body>
+<div class="login-container">
+  <div class="header">
+    <img src="voltrix-logo.png" alt="VOLTRIX" class="logo" onerror="handleImageError(this)">
+    <div class="title">Welcome Back</div>
+    <div class="subtitle">Login to your account</div>
+  </div>
+
+  <form id="loginForm" onsubmit="event.preventDefault(); performLogin();">
+    <div class="input-group">
+      <label>Phone Number</label>
+      <input type="tel" id="phoneInput" placeholder="e.g. +2348012345678" required>
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="passwordInput" placeholder="••••••••" required>
+    </div>
+    <button type="submit" class="btn-login" id="loginBtn">Login</button>
+    <div id="msg" class="msg"></div>
+  </form>
+
+  <div class="footer-text">
+    Don't have an account? <a href="register.html">Register here</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+  function $(id){ return document.getElementById(id); }
+  function showMsg(text, type) {
+    var m = $('msg');
+    m.textContent = text;
+    m.className = 'msg ' + type;
+  }
+  function handleImageError(img) {
+    img.onerror = null;
+    img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%232563eb" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+  }
+
+  async function performLogin() {
+    var phoneRaw = $('phoneInput').value.trim();
+    var password = $('passwordInput').value;
+    var btn = $('loginBtn');
+
+    if (!phoneRaw || !password) return showMsg('Please fill in all fields', 'error');
+
+    // Format phone to match database (+234...)
+    var phone = phoneRaw;
+    if (/^0\d{10}$/.test(phoneRaw)) phone = '+234' + phoneRaw.substring(1);
+    else if (/^\d{10}$/.test(phoneRaw)) phone = '+234' + phoneRaw;
+
+    btn.disabled = true;
+    btn.textContent = 'Logging in...';
+    showMsg('Verifying credentials...', 'success');
+
+    // ⭐ SAFETY TIMEOUT: Reset button if it takes longer than 10 seconds ⭐
+    var safetyTimeout = setTimeout(function() {
+      btn.disabled = false;
+      btn.textContent = 'Login';
+      showMsg('❌ Connection timed out. Please check your internet and try again.', 'error');
+    }, 10000);
+
+    try {
+      // 1. Find user by phone
+      var userRow = await dbGetUserRowByPhone(phone);
+      
+      if (!userRow || userRow._queryError) {
+        clearTimeout(safetyTimeout);
+        btn.disabled = false; btn.textContent = 'Login';
+        return showMsg('❌ Phone number not registered. Did you run the SQL script to create the users table?', 'error');
+      }
+
+      // 2. Verify password
+      var isValid = await verifyPassword(password, userRow.password_hash, phone);
+      
+      if (!isValid) {
+        clearTimeout(safetyTimeout);
+        btn.disabled = false; btn.textContent = 'Login';
+        return showMsg('❌ Incorrect password', 'error');
+      }
+
+      if (userRow.banned) {
+        clearTimeout(safetyTimeout);
+        btn.disabled = false; btn.textContent = 'Login';
+        return showMsg('⛔ Your account has been restricted', 'error');
+      }
+
+      // 3. Set session and redirect
+      clearTimeout(safetyTimeout);
+      setSession(userRow.user_id);
+      showMsg('✅ Login successful! Redirecting...', 'success');
+      
+      setTimeout(function() {
+        window.location.href = 'dashboard.html';
+      }, 800);
+
+    } catch (e) {
+      clearTimeout(safetyTimeout);
+      console.error(e);
+      btn.disabled = false; btn.textContent = 'Login';
+      showMsg('❌ An error occurred: ' + (e.message || 'Try again.'), 'error');
+    } finally {
+      // Ensure button is always reset if an error occurs before the redirect
+      if (btn.textContent === 'Logging in...') {
+        clearTimeout(safetyTimeout);
+        btn.disabled = false; btn.textContent = 'Login';
+      }
+    }
+  }
+</script>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VOLTRIX - Profile</title>
+  <style>
+    :root { --light-blue: #3b82f6; --black: #111827; --white: #ffffff; --bg-light: #f0f7ff; --border: #e2e8f0; --text-muted: #64748b; --danger: #dc2626; --success: #16a34a; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-light); color: var(--black); display: flex; justify-content: center; padding: 15px 15px 80px 15px; min-height: 100vh; }
+    .app-container { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 15px; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .back-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--white); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; cursor: pointer; }
+    .back-btn svg { width: 18px; height: 18px; stroke: var(--black); stroke-width: 2; fill: none; }
+    .header-logo { height: 24px; object-fit: contain; }
+    .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--white); border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; cursor: pointer; }
+    .icon-btn svg { width: 18px; height: 18px; stroke: var(--black); stroke-width: 2; fill: none; }
+    .balance-card { background: var(--white); border-radius: 20px; padding: 20px; box-shadow: 0 8px 25px rgba(59, 130, 246, 0.08); border: 1px solid var(--border); }
+    .balance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .balance-title { font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+    .btn-fund { background: var(--light-blue); color: var(--white); border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .balance-main { font-size: 28px; font-weight: 900; color: var(--black); margin-bottom: 15px; }
+    .balance-main span { font-size: 16px; color: var(--light-blue); }
+    .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px; }
+    .balance-stat { display: flex; flex-direction: column; gap: 2px; }
+    .balance-stat span:first-child { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+    .balance-stat span:last-child { font-size: 14px; font-weight: 800; color: var(--black); }
+    .action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .action-btn { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
+    .action-btn:active { transform: scale(0.95); background: var(--bg-light); }
+    .action-btn svg { width: 20px; height: 20px; stroke: var(--light-blue); stroke-width: 2; fill: none; }
+    .action-btn span { font-size: 9px; font-weight: 700; color: var(--black); text-align: center; text-transform: uppercase; }
+    .menu-list { background: var(--white); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+    .menu-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); cursor: pointer; text-decoration: none; color: var(--black); }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item:active { background: var(--bg-light); }
+    .menu-left { display: flex; align-items: center; gap: 12px; }
+    .menu-icon { width: 20px; height: 20px; stroke: var(--light-blue); stroke-width: 2; fill: none; }
+    .menu-text { font-size: 14px; font-weight: 700; }
+    .menu-arrow { width: 16px; height: 16px; stroke: var(--text-muted); stroke-width: 2; fill: none; }
+    .menu-item.sign-out .menu-text { color: var(--danger); }
+    .menu-item.sign-out .menu-icon { stroke: var(--danger); }
+    .footer-text { text-align: center; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 10px; }
+    .footer-text span { color: var(--light-blue); margin: 0 4px; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--white); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding: 10px 0 15px 0; z-index: 100; max-width: 420px; left: 50%; transform: translateX(-50%); border-radius: 20px 20px 0 0; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 60px; }
+    .nav-icon { width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; }
+    .nav-icon svg { width: 22px; height: 22px; stroke: var(--text-muted); stroke-width: 2; fill: none; }
+    .nav-label { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .nav-item.active .nav-icon svg { stroke: var(--light-blue); }
+    .nav-item.active .nav-label { color: var(--light-blue); }
+
+    /* ⭐ MODAL STYLES ⭐ */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 200; }
+    .modal-card { background: #FFFFFF; border-radius: 24px; padding: 24px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    .modal-title { font-size: 18px; font-weight: 800; color: #111827; }
+    .modal-close { width: 32px; height: 32px; border-radius: 50%; background: #F3F4F6; color: #6B7280; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    
+    .info-avatar { width: 72px; height: 72px; border-radius: 50%; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; margin: 0 auto 16px; overflow: hidden; border: 3px solid #BFDBFE; }
+    .info-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--border); }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+    .info-value { font-size: 14px; font-weight: 800; color: var(--black); text-align: right; word-break: break-all; }
+    .status-badge { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; }
+    .status-active { background: #DCFCE7; color: var(--success); }
+    .status-banned { background: #FEE2E2; color: var(--danger); }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="window.location.href='dashboard.html'"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+      <img src="voltrix-logo.png" alt="VOLTRIX" class="header-logo" onerror="handleImageError(this)">
+    </div>
+    <div class="icon-btn" onclick="window.location.href='chat.html'">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+      </svg>
+    </div>
+  </header>
+
+  <div class="balance-card">
+    <div class="balance-header">
+      <div class="balance-title">Bal : <span id="balShort">₦0.00</span></div>
+      <button class="btn-fund" onclick="window.location.href='deposit.html'"><svg viewBox="0 0 24 24" width="14" height="14" stroke="white" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Fund</button>
+    </div>
+    <div class="balance-main"><span>₦</span> <span id="balMain">0.00</span></div>
+    <div class="balance-grid">
+      <div class="balance-stat"><span>Total Profit</span><span id="totalProfit">₦0.00</span></div>
+      <div class="balance-stat"><span>Total Withdrawn</span><span id="totalWithdrawn">₦0.00</span></div>
+      <div class="balance-stat"><span>Total Deposit</span><span id="totalDeposit">₦0.00</span></div>
+    </div>
+  </div>
+
+  <div class="action-grid">
+    <div class="action-btn" onclick="window.location.href='deposit.html'"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/></svg><span>Recharge</span></div>
+    <div class="action-btn" onclick="window.location.href='withdraw.html'"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Cashout</span></div>
+    <div class="action-btn" onclick="window.location.href='about.html'"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>About</span></div>
+    <div class="action-btn" onclick="window.location.href='g-vest.html'"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg><span>G-Vest</span></div>
+  </div>
+
+  <div class="menu-list">
+    <!-- ⭐ CHANGED: Now opens the Modal ⭐ -->
+    <div class="menu-item" onclick="openPersonalInfo()">
+      <div class="menu-left">
+        <svg class="menu-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="menu-text">Personal Information</span>
+      </div>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <a href="add-bank.html" class="menu-item"><div class="menu-left"><svg class="menu-icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span class="menu-text">Bind a Card</span></div><svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+    <a href="withdraw-record.html" class="menu-item"><div class="menu-left"><svg class="menu-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span class="menu-text">Withdraw Records</span></div><svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+    <a href="fund-record.html" class="menu-item"><div class="menu-left"><svg class="menu-icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span class="menu-text">Fund Records</span></div><svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+    
+    <div class="menu-item" onclick="downloadApp()">
+      <div class="menu-left">
+        <svg class="menu-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="menu-text">Download App</span>
+      </div>
+      <svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <a href="#" class="menu-item sign-out" onclick="logout()"><div class="menu-left"><svg class="menu-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span class="menu-text">Sign Out</span></div><svg class="menu-arrow" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></a>
+  </div>
+  <div class="footer-text">Fast <span>|</span> Secure</div>
+</div>
+
+<nav class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='dashboard.html'"><div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="nav-label">Home</span></div>
+  <div class="nav-item" onclick="window.location.href='team.html'"><div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="nav-label">Team</span></div>
+  <div class="nav-item" onclick="window.location.href='vip.html'"><div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><span class="nav-label">VIP</span></div>
+  <div class="nav-item" onclick="window.location.href='tasks.html'"><div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><span class="nav-label">Tasks</span></div>
+  <div class="nav-item active" onclick="window.location.href='profile.html'"><div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><span class="nav-label">Profile</span></div>
+</nav>
+
+<!-- ⭐ PERSONAL INFO MODAL ⭐ -->
+<div id="personalInfoModal" class="modal-overlay" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="modal-title">Personal Information</div>
+      <div class="modal-close" onclick="closePersonalInfo()">✕</div>
+    </div>
+    
+    <div class="info-avatar" id="infoAvatar">V</div>
+    
+    <div class="info-row">
+      <div class="info-label">Full Name</div>
+      <div class="info-value" id="infoName">--</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Phone Number</div>
+      <div class="info-value" id="infoPhone">--</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Email Address</div>
+      <div class="info-value" id="infoEmail">--</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Referral Code</div>
+      <div class="info-value" id="infoRefCode" style="color: var(--light-blue);">--</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Current VIP Plan</div>
+      <div class="info-value" id="infoVip">--</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Account Status</div>
+      <div class="info-value"><span id="infoStatus" class="status-badge status-active">Active</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Date Joined</div>
+      <div class="info-value" id="infoDate">--</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+var currentUser = null;
+
+function $(id){ return document.getElementById(id); }
+function f(n){ return '₦' + Number(n || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function handleImageError(img) { img.onerror = null; img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>'; }
+
+// ⭐ OPEN PERSONAL INFO MODAL ⭐
+function openPersonalInfo() {
+  if (!currentUser) return;
+  
+  // Set Avatar
+  var av = $('infoAvatar');
+  if (currentUser.facePhotoUrl) {
+    av.innerHTML = '<img src="' + currentUser.facePhotoUrl + '">';
+  } else {
+    av.textContent = (currentUser.firstName || 'V').charAt(0).toUpperCase();
+  }
+
+  // Populate Data
+  $('infoName').textContent = currentUser.fullName || 'User';
+  $('infoPhone').textContent = currentUser.phone || 'N/A';
+  $('infoEmail').textContent = currentUser.email || 'N/A';
+  $('infoRefCode').textContent = currentUser.referralCode || 'N/A';
+  
+  var level = (currentUser.currentLevel && currentUser.currentLevel !== 'Slot 0' && currentUser.currentLevel !== 'Rox 0') ? currentUser.currentLevel : 'No Active Plan';
+  $('infoVip').textContent = level;
+  
+  var statusBadge = $('infoStatus');
+  if (currentUser.banned) {
+    statusBadge.textContent = 'Restricted';
+    statusBadge.className = 'status-badge status-banned';
+  } else {
+    statusBadge.textContent = 'Active';
+    statusBadge.className = 'status-badge status-active';
+  }
+
+  if (currentUser.createdAt) {
+    var d = new Date(currentUser.createdAt);
+    $('infoDate').textContent = d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
+  } else {
+    $('infoDate').textContent = 'N/A';
+  }
+
+  $('personalInfoModal').style.display = 'flex';
+}
+
+function closePersonalInfo() {
+  $('personalInfoModal').style.display = 'none';
+}
+
+// Download App Logic
+var deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+function downloadApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => { if (choiceResult.outcome === 'accepted') console.log('User accepted'); deferredPrompt = null; });
+  } else {
+    alert("📱 HOW TO INSTALL VOLTRIX:\n\n1. Tap the browser menu (usually 3 dots at top right).\n2. Look for 'Install App' or 'Add to Home Screen'.\n3. Tap it, and VOLTRIX will be added to your phone!");
+  }
+}
+
+async function loadProfile() {
+  var user = await requireLogin();
+  if (!user) return;
+  
+  currentUser = await dbGetUser(user.userId);
+  if (!currentUser) return;
+  
+  var withdrawals = await dbGetWithdrawals(currentUser.userId);
+  var totalWithdrawn = (withdrawals || []).filter(function(w){ return w.status === 'approved' || w.status === 'success'; }).reduce(function(s, w){ return s + Number(w.amount || 0); }, 0);
+  
+  $('balShort').textContent = f(currentUser.balance);
+  $('balMain').textContent = Number(currentUser.balance || 0).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  $('totalProfit').textContent = f(currentUser.totalEarned || currentUser.totalProfit || 0);
+  $('totalWithdrawn').textContent = f(totalWithdrawn);
+  $('totalDeposit').textContent = f(currentUser.totalDeposit || 0);
+}
+document.addEventListener('DOMContentLoaded', loadProfile);
+</script>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</html>

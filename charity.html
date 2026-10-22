@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLTRIX Charity - Help the Poor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  body { background-color: #F9FAFB; color: #111827; padding: 15px 15px 80px 15px; display: flex; justify-content: center; min-height: 100vh; }
+  .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+  
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2563EB; cursor: pointer; }
+  .header-title { font-size: 18px; font-weight: 800; color: #111827; }
+
+  .hero { position: relative; border-radius: 20px; overflow: hidden; height: 200px; display: flex; align-items: flex-end; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+  .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+  .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); z-index: 2; }
+  .hero-text { position: relative; z-index: 3; color: white; }
+  .hero-text h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .hero-text p { font-size: 13px; font-weight: 500; opacity: 0.9; }
+
+  .card { background: #FFFFFF; border-radius: 20px; padding: 20px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+  .card h2 { font-size: 16px; font-weight: 800; color: #111827; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card p { font-size: 13px; color: #4B5563; line-height: 1.6; font-weight: 500; margin-bottom: 12px; }
+  
+  .grid-images { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .grid-images img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; border: 1px solid #E5E7EB; }
+
+  .donate-box { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 16px; padding: 18px; text-align: center; margin-top: 10px; }
+  .donate-box h3 { font-size: 15px; font-weight: 800; color: #1E40AF; margin-bottom: 6px; }
+  .donate-box p { font-size: 12px; color: #1E3A8A; margin-bottom: 14px; }
+  .btn-donate { width: 100%; padding: 14px; background: #2563EB; color: #FFFFFF; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
+</style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='dashboard.html'">←</button>
+    <div class="header-title">VOLTRIX Charity</div>
+    <div style="width:40px"></div>
+  </div>
+
+  <div class="hero">
+    <img src="https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Helping Poor" onerror="this.src='https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800'">
+    <div class="hero-overlay"></div>
+    <div class="hero-text">
+      <h1>Help the Poor</h1>
+      <p>Extending a hand of love to widows and the less privileged.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>❤️ Our Mission</h2>
+    <p>At VOLTRIX, we believe that true success is measured by the lives we touch. A portion of our platform's proceeds goes directly into supporting widows, orphans, and the less privileged in our communities.</p>
+    <div class="grid-images">
+      <img src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Widow" onerror="this.src='https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400'">
+      <img src="https://images.pexels.com/photos/6646861/pexels-photo-6646861.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Charity" onerror="this.src='https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400'">
+    </div>
+    <p>Every time you participate on VOLTRIX, you are indirectly contributing to a child's education, a widow's feeding, or a family's shelter.</p>
+  </div>
+
+  <div class="card">
+    <h2>🤝 How You Can Help</h2>
+    <p>If you wish to make a direct donation to our charity fund, you can do so through the deposit page. 100% of your donation goes to the less privileged.</p>
+    <div class="donate-box">
+      <h3>Make a Difference Today</h3>
+      <p>Your little kindness can change a life forever.</p>
+      <button class="btn-donate" onclick="window.location.href='deposit.html'">Donate Now</button>
+    </div>
+  </div>
+</div>
+</body>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</html>

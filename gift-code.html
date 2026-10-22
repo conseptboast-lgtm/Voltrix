@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F8F9FA">
+<title>Gift Code - Voltrix</title>
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif; }
+  body { background-color: #F8F9FA; color: #111827; overflow-x: hidden; min-height: 100vh; padding-bottom: 40px; }
+  a { text-decoration: none; }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; }
+  .help-btn { position: fixed; bottom: 20px; right: 20px; background: #2563EB; color: #FFFFFF; padding: 10px 18px; border-radius: 20px; font-size: 12px; font-weight: 800; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); z-index: 100; transition: 0.2s; }
+  .help-btn:active { transform: scale(0.95); }
+  .genus-page { max-width: 480px; margin: 0 auto; padding: 0 20px; }
+  .checkin-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0 10px; }
+  .back-icon { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #E5E7EB; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #2563EB; transition: 0.2s; }
+  .back-icon:active { transform: scale(0.95); background: #EFF6FF; }
+  .checkin-title { font-size: 18px; font-weight: 900; color: #111827; }
+  .gift-hero { text-align: center; margin: 20px 0 30px; }
+  .gh-icon { font-size: 48px; margin-bottom: 12px; }
+  .gh-title { font-size: 20px; font-weight: 900; color: #111827; margin-bottom: 6px; }
+  .gh-sub { font-size: 13px; font-weight: 600; color: #6B7280; }
+  .genus-card { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 20px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 20px; }
+  .g-field { margin-bottom: 16px; }
+  .g-field label { display: block; font-size: 11px; font-weight: 900; color: #2563EB; letter-spacing: 0.8px; margin-bottom: 7px; text-transform: uppercase; }
+  .g-input-wrap { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 12px; transition: 0.2s; display: flex; align-items: center; }
+  .g-input-wrap:focus-within { border-color: #2563EB; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+  .g-input-wrap input { width: 100%; padding: 14px 16px; border: none; background: transparent; font-size: 14px; font-weight: 700; color: #111827; outline: none; border-radius: 12px; text-align: center; letter-spacing: 2px; text-transform: uppercase; }
+  .g-input-wrap input::placeholder { color: #9CA3AF; font-weight: 500; letter-spacing: normal; text-transform: none; }
+  .g-btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+  .g-btn:active { transform: scale(0.98); }
+  .g-btn-primary { background: linear-gradient(135deg, #60A5FA, #2563EB); color: #FFFFFF; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); }
+  .g-btn-secondary { background: #EFF6FF; color: #2563EB; border: 1.5px solid rgba(37,99,235,0.2); }
+  .g-msg { display: none; align-items: center; justify-content: center; text-align: center; font-size: 12.5px; margin-top: 14px; font-weight: 800; padding: 12px 14px; border-radius: 12px; width: 100%; }
+  .g-msg.show { display: flex; }
+  .g-msg.error { background: #FEF2F2; border: 1.5px solid rgba(220, 38, 38, 0.3); color: #DC2626; }
+  .g-msg.success { background: #F0FDF4; border: 1.5px solid rgba(34, 197, 94, 0.3); color: #16A34A; }
+  .gift-info { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 16px; padding: 20px; text-align: center; }
+  .gi-title { font-size: 14px; font-weight: 900; color: #111827; margin-bottom: 8px; }
+  .gi-text { font-size: 12.5px; font-weight: 600; color: #6B7280; line-height: 1.5; margin-bottom: 12px; }
+  .gi-text b { color: #2563EB; }
+  .popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 200; }
+  .popup-card { background: #FFFFFF; border: 1.5px solid #E5E7EB; border-radius: 20px; padding: 24px; width: 100%; max-width: 340px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); text-align: center; }
+  .reward-icon { font-size: 40px; margin-bottom: 10px; }
+  .reward-title { font-size: 16px; font-weight: 900; color: #111827; margin-bottom: 6px; }
+  .reward-amount { font-size: 32px; font-weight: 900; color: #2563EB; margin-bottom: 6px; }
+  .reward-sub { font-size: 12px; font-weight: 600; color: #6B7280; }
+  .genus-footer { margin-top: 24px; text-align: center; font-size: 11px; color: #9CA3AF; font-weight: 700; padding-bottom: 20px; }
+  .genus-footer .sep { color: #2563EB; margin: 0 6px; font-weight: 900; }
+  .genus-footer .copy { display: block; margin-top: 6px; font-size: 10px; color: #D1D5DB; }
+</style>
+</head>
+<body>
+<a href="https://t.me/sandrakbullouck" target="_blank" class="help-btn">Help</a>
+<div class="genus-page" style="padding-top:20px">
+  <div class="checkin-header">
+    <button class="back-icon" onclick="go('dashboard.html')">←</button>
+    <div class="checkin-title">Gift Code</div>
+    <div style="width:40px"></div>
+  </div>
+  <div class="gift-hero">
+    <div class="gh-icon">🎟️</div>
+    <div class="gh-title">Have a Gift Code?</div>
+    <div class="gh-sub">Enter it below to claim your bonus</div>
+  </div>
+  <div class="genus-card" style="flex:0">
+    <div class="g-field">
+      <label>Input Code</label>
+      <div class="g-input-wrap">
+        <input type="text" id="giftInput" placeholder="e.g. VOLTRIX2026" maxlength="20" autocomplete="off" />
+      </div>
+    </div>
+    <button class="g-btn g-btn-primary" id="redeemBtn" onclick="redeemCode()">🎁 Redeem Code</button>
+    <p id="msg" class="g-msg"></p>
+  </div>
+  <div class="gift-info">
+    <div class="gi-title">💡 How to get codes</div>
+    <p class="gi-text">Gift codes are announced <b>only in the Voltrix Telegram group</b>. Join and watch for new codes!</p>
+    <button class="g-btn g-btn-secondary" onclick="window.open('https://t.me/sandrakbullouck','_blank')" style="margin-top:12px">💬 Join Telegram Group</button>
+  </div>
+  <div class="genus-footer">Fast <span class="sep">|</span> Secure<span class="copy">All rights reserved © 2026</span></div>
+</div>
+<div id="successPopup" class="popup-overlay" style="display:none;">
+  <div class="popup-card reward-card">
+    <div class="reward-icon">🎉</div>
+    <div class="reward-title">Code Redeemed!</div>
+    <div class="reward-amount" id="successAmount">₦0</div>
+    <div class="reward-sub">Added to your balance</div>
+    <button class="g-btn g-btn-primary" onclick="closeSuccess()" style="margin-top:16px;width:100%">Awesome!</button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+var currentUser = null;
+function $(id){ return document.getElementById(id); }
+function go(u){ window.location.href = u; }
+function showMsg(t, type){ var m = $('msg'); m.textContent = t; m.className = 'g-msg show ' + (type || 'error'); }
+async function init(){ currentUser = await requireLogin(); if (!currentUser) return; }
+async function redeemCode(){
+  var code = $('giftInput').value.trim().toUpperCase();
+  if (!code) return showMsg('Please enter a gift code');
+  var btn = $('redeemBtn'); btn.disabled = true; btn.textContent = 'Checking…';
+  var { data: codes } = await supabaseClient.from('gift_codes').select('*').eq('code', code).limit(1);
+  if (!codes || codes.length === 0) { showMsg('❌ Invalid code'); btn.disabled = false; btn.textContent = '🎁 Redeem Code'; return; }
+  var gc = codes[0];
+  if (!gc.approved) { showMsg('⏳ This code is not yet active. Try again later.'); btn.disabled = false; btn.textContent = '🎁 Redeem Code'; return; }
+  if (!gc.active) { showMsg('❌ This code has been deactivated'); btn.disabled = false; btn.textContent = '🎁 Redeem Code'; return; }
+  var { data: used } = await supabaseClient.from('gift_redemptions').select('id').eq('user_id', currentUser.userId).eq('code', code).limit(1);
+  if (used && used.length > 0) { showMsg('❌ You already used this code'); btn.disabled = false; btn.textContent = '🎁 Redeem Code'; return; }
+  if ((gc.used_count || 0) >= (gc.max_uses || 100)) { showMsg('❌ This code has reached its limit'); btn.disabled = false; btn.textContent = '🎁 Redeem Code'; return; }
+  await dbUpdateUser(currentUser.userId, { balance: (currentUser.balance || 0) + Number(gc.amount), total_earned: (currentUser.totalEarned || 0) + Number(gc.amount) });
+  await supabaseClient.from('gift_redemptions').insert([{ user_id: currentUser.userId, code: code, amount: gc.amount }]);
+  await supabaseClient.from('gift_codes').update({ used_count: (gc.used_count || 0) + 1 }).eq('id', gc.id);
+  $('successAmount').textContent = formatNaira(gc.amount); $('successPopup').style.display = 'flex'; $('giftInput').value = '';
+  btn.disabled = false; btn.textContent = '🎁 Redeem Code';
+}
+function closeSuccess(){ $('successPopup').style.display = 'none'; go('dashboard.html'); }
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

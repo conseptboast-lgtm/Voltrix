@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Packages - VOLTRIX</title>
+<style>
+  :root { --primary: #2563EB; --primary-light: #EFF6FF; --primary-gradient: linear-gradient(135deg, #4F46E5, #3B82F6); --black: #111827; --gray-dark: #374151; --gray: #6B7280; --gray-light: #F9FAFB; --border: #E5E7EB; --white: #FFFFFF; --success: #16A34A; --danger: #DC2626; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background-color: var(--gray-light); color: var(--black); overflow-x: hidden; min-height: 100vh; padding-bottom: 40px; }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; }
+  .vip-header { background: var(--primary-gradient); padding: 24px 20px; border-radius: 0 0 28px 28px; box-shadow: 0 10px 30px -5px rgba(37, 99, 235, 0.3); position: relative; margin-bottom: 24px; }
+  .vip-close { position: absolute; top: 20px; right: 20px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.15); color: #FFFFFF; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+  .vip-close:active { transform: scale(0.9); }
+  .vip-header-row { display: flex; align-items: center; gap: 16px; }
+  .vip-avatar { width: 64px; height: 64px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: var(--primary); overflow: hidden; flex-shrink: 0; border: 3px solid rgba(255,255,255,0.8); }
+  .vip-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .vip-header-info { flex: 1; min-width: 0; color: #FFFFFF; }
+  .vip-name { font-size: 18px; font-weight: 800; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vip-wip { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.8); margin-bottom: 6px; }
+  .vip-product { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
+  .vip-product-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.8); text-transform: uppercase; }
+  .vip-product-count { font-size: 13px; font-weight: 800; color: #FFFFFF; }
+  .vip-main { padding: 0 20px; max-width: 480px; margin: 0 auto; }
+  .vip-title { font-size: 20px; font-weight: 800; color: var(--black); margin-bottom: 4px; text-align: center; }
+  .vip-subtitle { font-size: 13px; color: var(--gray); font-weight: 500; text-align: center; margin-bottom: 24px; }
+  .vip-list { display: flex; flex-direction: column; gap: 20px; }
+  .vip-card { background: var(--white); border-radius: 24px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid var(--border); transition: 0.3s; }
+  .vip-card:active { transform: scale(0.98); }
+  .vip-card-image { width: 100%; height: auto; display: block; }
+  .vip-card-body { padding: 20px; }
+  .vip-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .vip-card-level { font-size: 16px; font-weight: 800; color: var(--primary); }
+  .vip-card-price { font-size: 16px; font-weight: 800; color: var(--black); }
+  .vip-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .vip-stat-item { background: var(--gray-light); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; gap: 4px; }
+  .vip-stat-label { font-size: 10px; font-weight: 700; color: var(--gray); text-transform: uppercase; }
+  .vip-stat-value { font-size: 14px; font-weight: 800; color: var(--gray-dark); }
+  .vip-stat-value.gold { color: var(--success); }
+  .vip-buy-btn { width: 100%; padding: 16px; background: var(--primary); color: var(--white); font-size: 14px; font-weight: 700; border-radius: 14px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); }
+  .vip-buy-btn.locked { background: #9CA3AF; box-shadow: none; cursor: not-allowed; opacity: 0.8; }
+  .popup-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 200; }
+  .popup-card { max-width: 400px; background: var(--white); border-radius: 24px; padding: 28px 24px; width: 100%; }
+  .update-view { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 10px 0; }
+  .spinner { font-size: 40px; color: var(--primary); animation: spin 1.2s linear infinite; }
+  @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  .updated-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; }
+  .footer { margin-top: 40px; text-align: center; font-size: 12px; color: var(--gray); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="vip-header">
+  <button class="vip-close" onclick="go('dashboard.html')">✕</button>
+  <div class="vip-header-row">
+    <div class="vip-avatar" id="vipAvatar">V</div>
+    <div class="vip-header-info">
+      <div class="vip-name" id="vipName">User</div>
+      <div class="vip-wip" id="vipWip">WIP: —</div>
+      <div class="vip-product"><span class="vip-product-label">Slot</span><span class="vip-product-count" id="vipProduct">None</span></div>
+    </div>
+  </div>
+</div>
+<div class="vip-main">
+  <div class="vip-title">VIP Packages</div>
+  <div class="vip-subtitle">Choose a slot and start earning daily</div>
+  <div class="vip-list" id="vipList"></div>
+  <div class="footer">Fast <span>|</span> Secure</div>
+</div>
+
+<div id="purchasePopup" class="popup-overlay" style="display:none;">
+  <div class="popup-card">
+    <div id="popupView" style="text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">💎</div>
+      <div style="font-size:18px;font-weight:800;color:var(--primary);margin-bottom:12px" id="popupGreeting">Dear User,</div>
+      <p style="font-size:14px;color:var(--gray-dark);line-height:1.6;margin-bottom:20px;font-weight:500" id="popupMessage"></p>
+      <div style="background:var(--gray-light);border-radius:16px;padding:16px;margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray);font-weight:600;padding:8px 0"><span>Current Balance</span><span id="popupBalance" style="color:var(--black);font-weight:800">₦0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray);font-weight:600;padding:8px 0"><span>Plan Cost</span><span id="popupCost" style="color:var(--danger);font-weight:800">₦0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--gray);font-weight:700;padding:12px 0 4px;border-top:1px solid var(--border);margin-top:4px"><span>New Balance</span><span id="popupNewBalance" style="color:var(--success);font-weight:800">₦0</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <button style="padding:14px;border-radius:12px;font-size:14px;font-weight:700;background:var(--white);color:var(--gray);border:1.5px solid var(--border);" onclick="closePurchase()">Cancel</button>
+        <button id="confirmBtn" style="padding:14px;border-radius:12px;font-size:14px;font-weight:700;background:var(--primary);color:var(--white);border:none;" onclick="confirmPurchase()">Apply</button>
+      </div>
+    </div>
+    <div id="processingView" class="update-view" style="display:none"><div class="spinner">✦</div><p class="update-text">Processing…</p></div>
+    <div id="successView" class="update-view" style="display:none"><div class="updated-icon">✓</div><p class="update-text updated-text">Purchased!</p><p style="font-size:13px;color:var(--gray)" id="successLevel">Slot 1 activated</p></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+var PLANS = [
+  { level: 'Slot 1',  price: 15000,  tasks: 5,  perTask: 100,     daily: 500,      month: 15000,    image: 'vip-vivo.jpg', locked: false },
+  { level: 'Slot 2',  price: 36000,  tasks: 6,  perTask: 200,     daily: 1200,     month: 36000,    image: 'vip-itel.jpg', locked: false },
+  { level: 'Slot 3',  price: 77000,  tasks: 7,  perTask: 366.67,  daily: 2566.67,  month: 77000,    image: 'vip-oppo.jpg', locked: false },
+  { level: 'Slot 4',  price: 134000, tasks: 8,  perTask: 558.33,  daily: 4466.67,  month: 134000,   image: 'vip-nokia.jpg', locked: false },
+  { level: 'Slot 5',  price: 222000, tasks: 9,  perTask: 822.22,  daily: 7400,     month: 222000,   image: 'vip-hawaii.jpg', locked: false },
+  { level: 'Slot 6',  price: 450000, tasks: 10, perTask: 1500,    daily: 15000,    month: 450000,   image: 'vip-infinix.jpg', locked: true },
+  { level: 'Slot 7',  price: 550000, tasks: 11, perTask: 1666.67, daily: 18333.33, month: 550000,   image: 'vip-redmi.jpg', locked: true },
+  { level: 'Slot 8',  price: 1100000,tasks: 12, perTask: 3055.56, daily: 36666.67, month: 1100000,  image: 'vip-samsung.jpg', locked: true },
+  { level: 'Slot 9',  price: 2400000,tasks: 13, perTask: 6153.85, daily: 80000,    month: 2400000,  image: 'vip-tecno.jpg', locked: true }
+];
+var currentUser = null, pending = null;
+function $(id){ return document.getElementById(id); }
+function go(url){ window.location.href = url; }
+function f(n){ return '₦' + Number(n || 0).toLocaleString('en-NG', { maximumFractionDigits: 2 }); }
+function handleImageError(img) { img.onerror = null; img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>'; }
+
+function renderVipList() {
+  var list = $('vipList'); list.innerHTML = '';
+  var hasActiveVip = currentUser && currentUser.currentLevel && currentUser.currentLevel !== 'Slot 0';
+
+  PLANS.forEach(function(plan, index) {
+    var card = document.createElement('div'); card.className = 'vip-card';
+    var btnText = hasActiveVip ? 'Upgrade to ' + plan.level : 'Purchase ' + plan.level;
+    var btnClass = 'vip-buy-btn';
+    var isDisabled = false;
+    var clickAction = 'applyPlan(' + index + ')';
+
+    if (plan.locked) {
+        btnText = '🔒 Locked (Coming Soon)';
+        btnClass = 'vip-buy-btn locked';
+        isDisabled = true;
+        clickAction = '';
+    }
+
+    card.innerHTML = '<img src="' + plan.image + '" alt="' + plan.level + '" class="vip-card-image" onerror="handleImageError(this)">' +
+      '<div class="vip-card-body"><div class="vip-card-header"><div class="vip-card-level">' + plan.level + '</div><div class="vip-card-price">' + f(plan.price) + '</div></div>' +
+      '<div class="vip-stats-grid"><div class="vip-stat-item"><span class="vip-stat-label">Daily Tasks</span><span class="vip-stat-value">' + plan.tasks + '</span></div>' +
+      '<div class="vip-stat-item"><span class="vip-stat-label">Per Task</span><span class="vip-stat-value">' + f(plan.perTask) + '</span></div>' +
+      '<div class="vip-stat-item"><span class="vip-stat-label">Daily Revenue</span><span class="vip-stat-value gold">' + f(plan.daily) + '</span></div>' +
+      '<div class="vip-stat-item"><span class="vip-stat-label">30-Day Revenue</span><span class="vip-stat-value gold">' + f(plan.month) + '</span></div></div>' +
+      '<button class="' + btnClass + '" ' + (isDisabled ? 'disabled' : '') + ' onclick="' + clickAction + '">' + btnText + '</button></div>';
+    list.appendChild(card);
+  });
+}
+
+function applyPlan(index){
+  if (!currentUser) return; 
+  var plan = PLANS[index];
+  if (plan.locked) return alert('🔒 This VIP slot is currently locked. Please check back later.');
+  if (currentUser.currentLevel === plan.level) return alert('You already own this slot');
+  if ((currentUser.balance || 0) < plan.price) return alert('❌ Insufficient balance. You need ' + f(plan.price));
+  
+  pending = plan;
+  $('popupGreeting').textContent = 'Dear ' + (currentUser.firstName || 'User') + ',';
+  var isUpgrade = currentUser.currentLevel && currentUser.currentLevel !== 'Slot 0';
+  var msg = '';
+  
+  if (isUpgrade) {
+      msg = 'Upgrade to <b>' + plan.level + '</b> for <b style="color:var(--primary)">' + f(plan.price) + '</b>?<br><br><span style="color:var(--danger); font-weight:bold; font-size:13px;">Note: Your VIP upgrade bonus will be credited to you shortly by the admin.</span>';
+  } else {
+      msg = 'Purchase <b>' + plan.level + '</b> for <b style="color:var(--primary)">' + f(plan.price) + '</b>?<br>You\'ll earn <b style="color:var(--success)">' + f(plan.daily) + '</b> per day.';
+  }
+
+  $('popupMessage').innerHTML = msg;
+  $('popupBalance').textContent = f(currentUser.balance); $('popupCost').textContent = '-' + f(plan.price); $('popupNewBalance').textContent = f((currentUser.balance || 0) - plan.price);
+  $('confirmBtn').textContent = isUpgrade ? 'Upgrade' : 'Apply';
+  $('popupView').style.display = 'block'; $('processingView').style.display = 'none'; $('successView').style.display = 'none'; $('purchasePopup').style.display = 'flex';
+}
+
+function closePurchase(){ $('purchasePopup').style.display = 'none'; pending = null; }
+
+async function confirmPurchase(){
+  if (!pending || !currentUser) return; $('popupView').style.display = 'none'; $('processingView').style.display = 'flex';
+  try {
+    await dbUpdateUser(currentUser.userId, { balance: (currentUser.balance || 0) - pending.price, current_level: pending.level, tasks_completed_today: 0 });
+    $('processingView').style.display = 'none'; $('successView').style.display = 'flex'; $('successLevel').textContent = pending.level + ' activated';
+    setTimeout(function(){ location.reload(); }, 1800);
+  } catch (e) { console.error(e); alert('❌ ' + (e.message || 'Error')); closePurchase(); }
+}
+
+async function loadUser(){
+  currentUser = await requireLogin(); if (!currentUser) return;
+  var u = currentUser; $('vipName').textContent = u.fullName || 'User'; $('vipWip').textContent = 'WIP: ' + (u.userId || '—');
+  $('vipProduct').textContent = (u.currentLevel && u.currentLevel !== 'Slot 0' && u.currentLevel !== 'Rox 0') ? u.currentLevel : 'None';
+  var av = $('vipAvatar'); if (u.facePhotoUrl) av.innerHTML = '<img src="' + u.facePhotoUrl + '" onerror="handleImageError(this)">'; else av.textContent = (u.firstName || 'V').charAt(0).toUpperCase();
+  renderVipList(); 
+}
+
+document.addEventListener('DOMContentLoaded', function(){ loadUser(); });
+</script>
+</body>
+</html>
